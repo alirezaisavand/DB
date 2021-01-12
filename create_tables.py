@@ -80,20 +80,6 @@ cur.execute('''create table foodOrdered
         foreign key (foodId) references food(id));''')
 
 
-
-
-
-
-
-
-#cur.execute('''CREATE TABLE STUDENT
-#      (ADMISSION INT PRIMARY KEY     NOT NULL,
-#      NAME           TEXT    NOT NULL,
-#      AGE            INT     NOT NULL,
-#      COURSE        CHAR(50),
-#      DEPARTMENT        CHAR(cd50));''')
-
-
 print("Done!")
 
 con.commit()
