@@ -42,8 +42,6 @@ def searchFood (by, str):
     cur.execute("select * from food where " + by + " = '" + str + "';")
     rows = cur.fetchall()
 
-    rows.sort(key=lambda x: x[2])
-
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
