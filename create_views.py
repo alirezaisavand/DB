@@ -1,6 +1,9 @@
 import psycopg2
+import json
 
-con = psycopg2.connect(database="postgres", user="postgres", password="", host="127.0.0.1", port="5432")
+f = open('config_file.JSON')
+data = json.load(f)
+con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postgresql"]["user"],password=data["postgresql"]["password"], host=data["postgresql"]["host"], port=data["postgresql"]["port"])
 
 cur = con.cursor()
 cur.execute('''CREATE VIEW Cusfood AS
@@ -24,7 +27,7 @@ SELECT id,name,area,phoneNumber,balance
 FROM customer
 ''')
 cur.execute('''CREATE VIEW Cusbasket AS
-SELECT costomerId,foodId,amount
+SELECT customerid,foodId,amount
 FROM basket
 ''')
 cur.execute('''CREATE VIEW Cusorder AS
@@ -59,12 +62,13 @@ FROM customer
 ''')
 cur.execute('''CREATE VIEW Delorder AS
 SELECT id,restaurantId
-FROM order
+FROM orderr
 ''')
-cur.execute('''CREATE VIEW sending AS
+cur.execute('''CREATE VIEW Delsending AS
 SELECT orderId,deliveryId,arrivingTime,cost
-FROM Delsending
+FROM sending
 ''')
 
 con.commit()
 print("views of delivery created successfully")
+con.close()

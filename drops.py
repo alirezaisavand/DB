@@ -1,6 +1,9 @@
 import psycopg2
+import json
 
-con = psycopg2.connect(database="testdb", user="postgres", password="...", host="127.0.0.1", port="5433")
+f = open('config_file.JSON')
+data = json.load(f)
+con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postgresql"]["user"],password=data["postgresql"]["password"], host=data["postgresql"]["host"], port=data["postgresql"]["port"])
 
 cur = con.cursor()
 
@@ -14,7 +17,7 @@ cur.execute('''drop table discountCode''')
 cur.execute('''drop table basket''')
 cur.execute('''drop table customer''')
 
-print("Done!")
+print("Drop all tables Done!")
 
 con.commit()
 con.close()

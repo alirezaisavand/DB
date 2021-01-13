@@ -1,6 +1,9 @@
 import psycopg2
+import json
 
-con = psycopg2.connect(database="testdb", user="postgres", password="...", host="127.0.0.1", port="5433")
+f = open('config_file.JSON')
+data = json.load(f)
+con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postgresql"]["user"], password=data["postgresql"]["password"], host=data["postgresql"]["host"], port=data["postgresql"]["port"])
 
 cur = con.cursor()
 
@@ -10,6 +13,7 @@ cur.execute('''create table restaurant
         phoneNumber character(30),
         area character(30),
         type character(30),
+        score real,
         minOrder integer);''')
 
 cur.execute('''create table food
@@ -20,6 +24,7 @@ cur.execute('''create table food
         description character(30),
         price integer,
         restaurantid character(30),
+        score real,
         foreign key (restaurantid) references restaurant(id));''')
 
 cur.execute('''create table delivery
@@ -80,7 +85,7 @@ cur.execute('''create table foodOrdered
         foreign key (foodId) references food(id));''')
 
 
-print("Done!")
+print("create tables are Done!")
 
 con.commit()
 con.close()
