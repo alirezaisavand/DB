@@ -69,6 +69,14 @@ SELECT orderId,deliveryId,arrivingTime,cost
 FROM sending
 ''')
 
+cur.execute("CREATE VIEW ResRestaurant [(id, name, phoneNumber, area, type, minOrder)] AS SELECT id, name, phoneNumber, area, type, minOrder from restaurant")
+cur.execute("CREATE VIEW Resfood[(id,name,type,amount,description,price,restaurantId)] AS SELECT is, name, type, amount, description, price, restaurantId from from food")
+cur.execute("CREATE VIEW Resdelivery[(id,name,area,busy)] AS SELECT id,name,area,busy FROM delivery")
+cur.execute("CREATE VIEW Rescustomer[(id,name,area,phoneNumber)] AS SELECT id,name,area,phoneNumber from customer")
+cur.execute("CREATE VIEW Resorder[(id,restaurantId,preparingTime,customerId,orderTime)] AS SELECT id,restaurantId,preparingTime,customerId,orderTime from order")
+cur.execute("CREATE VIEW Ressending[(orderId,deliveryId)] AS SELECT orderId,deliveryId from sending")
+cur.execute("CREATE VIEW  ResfoodOrdered[(orderId,foodId)] AS SELECT orderId,foodId from foodOrdered")
+
 con.commit()
 print("views of delivery created successfully")
 con.close()
