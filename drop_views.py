@@ -29,6 +29,14 @@ cur.execute('''drop view Delcustomer''')
 
 print("Drop all delivery views Done!")
 
+cur.execute('''drop view Resrestaurant''')
+cur.execute('''drop view Resfood''')
+cur.execute('''drop view Resdelivery''')
+cur.execute('''drop view Rescustomer''')
+cur.execute('''drop view Resorder''')
+cur.execute('''drop view Ressending''')
+cur.execute('''drop view ResfoodOrdered''')
+
 con.commit()
 
 con.close()
