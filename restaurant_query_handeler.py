@@ -31,10 +31,12 @@ def increase_amount(food_id, amount):
     amount += rows[0][0]
     cur.execute('''UPDATE Resfood SET amount=''' + str(amount) + ''' WHERE Id=''' + str(food_id) + ")")
 
-def add_new_restaurant(id,name,phoneNumber,area,type,minOrder):
+
+def add_new_restaurant(name, phone_number, area, type, min_order):
     cur.execute(
         '''INSERT INTO RESrestaurant(id,name,phoneNumber,area,type,minOrder,score) VALUES(''' + Id_handler.get_new_id() +
-        "," + name + "," + str(phoneNumber) + " " + area + ","+type+",0)")
+        "," + name + "," + str(phone_number) + " " + area + "," + type + "," + str(min_order) + ",0)")
+
 
 con.commit()
 con.close()
