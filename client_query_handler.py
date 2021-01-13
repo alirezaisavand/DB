@@ -110,11 +110,5 @@ def orderFood (customer, restaurant, food):
 
         print("food ordered!")
 
-customer = input()
-restaurant = input()
-food = input()
-
-orderFood(customer, restaurant, food)
-
 con.commit()
 con.close()
