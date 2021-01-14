@@ -90,7 +90,10 @@ cur.execute('''create table food_ordered
 
 cur.execute('''create table user_pass
         (customer_id character('''+token_length+''') not null,
-        password character('''+token_length+''') not null);''')
+        password character('''+token_length+''') not null,
+        username character('''+token_length+''') not null,
+        primary key (customer_id)
+        );''')
 
 
 print("create tables are Done!")
