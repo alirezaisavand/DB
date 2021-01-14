@@ -1,3 +1,7 @@
+#important changes:
+#adding busy to Cusdelivery
+#adding total_price to Cusorder and Resorder
+
 import psycopg2
 import json
 
@@ -15,7 +19,7 @@ SELECT id,name,phone_number,area,type,min_order,score
 FROM restaurant
 ''')
 cur.execute('''CREATE VIEW Cusdelivery AS
-SELECT id,name
+SELECT id,name, busy
 FROM delivery
 ''')
 cur.execute('''CREATE VIEW CusdiscountCode AS

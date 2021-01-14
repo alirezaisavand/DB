@@ -155,7 +155,8 @@ def rate_food(order_id, food_id, score):
                 " where order_id = " + id_to_str(order_id) + " and food_id = " + id_to_str(food_id) + ';')
 
 def get_customer_orders(customer_id):
-    cur.execute("select restaurant_id, preparing_time, order_time, discount_id, total_price from Cusorder where customer_id = " + id_to_str(customer_id) + ";")
+    cur.execute("select restaurant_id, preparing_time, order_time, discount_id, total_price, order_id from Cusorder where customer_id = "
+                + id_to_str(customer_id) + ";")
     orders_rows = cur.fetchall()
     for row in orders_rows:
         cur.execute("select name from Cusrestaurant where id = " + id_to_str(row[0]) + ";")
@@ -168,9 +169,23 @@ def get_customer_orders(customer_id):
         order_time = row[2]
         discount_id = row[3]
         total_price = row[4]
+        order_id = row[5]
+        cur.execute("select arriving_time from Cussending where order_id = " + id_to_str(order_id) + ";")
+        rows = cur.fetchall()
+        arriving_time = rows[0][0]
+
         print("restaurant: " + restaurant_name + " preparing time: " + preparing_time +
-              " order time: " + order_time + " discount id: " + discount_id + " total price: " + total_price)
+              " order time: " + order_time + " arriving time: " + arriving_time + " discount id: " + discount_id +
+              " total price: " + total_price)
 
-
+def receive_order(order_id):
+    cur.execute("select * from Cussending where order_id = " + id_to_str(order_id) + ";")
+    rows = cur.fetchall()
+    if len(rows) == 0:
+        print("Error")
+        return
+    delivery_id = rows[0][1]
+    cur.execute("update Cusdelivery set busy = false where id = " + id_to_str(delivery_id) + ";")
+    cur.execute("update Cussending set arriving_time = CURRENT_TIMESTAMP where order_id = " + id_to_str(order_id) + ";")
 
 con.commit()
