@@ -2,7 +2,7 @@
   "postgresql":{
         "host":"127.0.0.1",
         "user":"postgres",
-        "password":"Ckodser1380",
+        "password":"Ali13431352",
         "database":"DB99",
         "port":"5432",
         "token_length": "30",
