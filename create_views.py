@@ -7,6 +7,9 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
 
 cur = con.cursor()
 
+
+
+
 cur.execute('''CREATE VIEW Cusrestaurant AS
 SELECT id,name,phone_number,area,type,min_order,score
 FROM restaurant
@@ -39,6 +42,7 @@ cur.execute('''CREATE VIEW CusfoodOrdered AS
 SELECT order_id,food_id,score
 FROM food_ordered
 ''')
+
 cur.execute('''CREATE VIEW Cusfood AS
 SELECT id,name,type,amount,description,price,restaurant_id,score
 FROM food
@@ -78,7 +82,6 @@ cur.execute('''CREATE VIEW Resorder AS SELECT id,restaurant_id,preparing_time,cu
 cur.execute('''CREATE VIEW Ressending AS SELECT order_id,delivery_id from sending''')
 cur.execute('''CREATE VIEW ResfoodOrdered AS SELECT order_id,food_id from food_ordered''')
 
+
 print("views of restaurant created successfully")
 con.commit()
-
-con.close()

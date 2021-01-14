@@ -10,7 +10,25 @@ phone_length = data["postgresql"]["phone_length"]
 description_length = data["postgresql"]["description_length"]
 
 cur = con.cursor()
-cur.execute('''create trigger score_handler on foodOrdered after update,insert,delete ''')
-
+#check kon ino
+cur.execute('''create trigger food_score_handler 
+            after update of score on foodOrdered
+            referencing new as n1 
+            for each row
+            when (n1.score is not null)
+            begin
+            update food set score = (
+            select avg(score) from foodOrdered 
+            where foodOrdered.food_id = food.id 
+            ) where food.id = n1.food_id
+            end''')
+cur.execute('''create trigger retaurant_score_handler
+            after update of score on food
+            referencing new as n1
+            for each row
+            begin
+            update restaurant set score = (
+                select avg(score) from food where food.restaurant_id = restaurant.id
+            ) where restaurant.id = n1.restaurant_id 
+            end''')
 con.commit()
-con.close()

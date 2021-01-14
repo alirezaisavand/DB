@@ -21,4 +21,3 @@ cur.execute('''drop table restaurant''')
 print("Drop all tables Done!")
 
 con.commit()
-con.close()

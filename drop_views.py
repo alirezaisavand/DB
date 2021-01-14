@@ -40,4 +40,3 @@ cur.execute('''drop view ResfoodOrdered''')
 
 con.commit()
 print("Drop all restaurant views Done!")
-con.close()

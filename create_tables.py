@@ -99,4 +99,3 @@ cur.execute('''create table user_pass
 print("create tables are Done!")
 
 con.commit()
-con.close()

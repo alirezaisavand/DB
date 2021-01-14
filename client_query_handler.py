@@ -8,6 +8,10 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
                        port=data["postgresql"]["port"])
 cur = con.cursor()
 
+def id_to_str(id):
+    str_id = "\'" + id + "\'"
+    return str_id
+
 def searchـrestaurant (by, str):
     cur.execute("select * from restaurant where " + by + " = '" + str + "';")
     rows = cur.fetchall()
@@ -135,14 +139,23 @@ def check_user_pass(id, password):
     return 0
 
 def rate_food(food_id, order_id, score):
-    cur.execute("update CusfoodOrdered set score = " + str(score) + " where food_id = " + food_id + " and order_id = " + order_id + ";")
+    cur.execute("update CusfoodOrdered set score = " + str(score) +
+                " where food_id = " + id_to_str(food_id) + " and order_id = " + id_to_str(order_id) + ";")
 
 def charge_account(customer_id, amount):
-    cur.execute("update Cuscustomer set balance = " + str(amount) + " where id = " + customer_id + ";")
+    cur.execute("select * from Cuscustomer where id = " + id_to_str(customer_id) + ";")
+    rows = cur.fetchall;
+    if len(rows) == 0:
+        print("Error")
+        return
+    balance = rows[0][4] + amount
+    cur.execute("update Cuscustomer set balance = " + str(balance) +
+                " where id = " + id_to_str(customer_id) + ";")
 
 
-def rate_food(food_id, score):
-    cur.execute("select * from foodRatings")
+def rate_food(order_id, food_id, score):
+    cur.execute("update CusfoodOrdered set score = " + str(score) +
+                " where order_id = " + id_to_str(order_id) + " and food_id = " + id_to_str(food_id) + ';')
 
 con.commit()
 con.close()
