@@ -7,7 +7,7 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
 
 cur = con.cursor()
 
-cur.execute('''drop table user_pass''')
+#cur.execute('''drop table user_pass''')
 cur.execute('''drop table food_ordered''')
 cur.execute('''drop table sending''')
 cur.execute('''drop table orderr''')
