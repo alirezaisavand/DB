@@ -112,8 +112,5 @@ def rate_food(food_id, order_id, score):
 def charge_account(customer_id, amount):
     cur.execute("update Cuscustomer set balance = " + str(amount) + " where id = " + customer_id + ";")
 
-def get_ordered_list(customer_id):
-
-
 con.commit()
 con.close()

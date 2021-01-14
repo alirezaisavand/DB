@@ -1,3 +1,4 @@
+import PySimpleGUI
 from graphics import *
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 700, 700
@@ -20,7 +21,6 @@ def initial_buttons():
     quit.draw(win)
 
     return singUp, singIn, quit
-
 
 def inside(point, rectangle):
     """ Is point inside rectangle? """
