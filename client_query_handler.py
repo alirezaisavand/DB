@@ -106,8 +106,6 @@ def add_client (id, name, area, phoner_number, balance):
                 + area + "', '" + phoner_number + "', " + str(balance)
                 + ");")
 
-add_client(id, name, area, phoner_number, balance)
-
 def rate_food(food_id, score):
     cur.execute("select * from foodRatings")
 

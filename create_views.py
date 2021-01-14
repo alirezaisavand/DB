@@ -7,12 +7,6 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
 
 cur = con.cursor()
 
-cur.execute('''CREATE VIEW CusfoodRatings AS 
-SELECT foodId, score ''')
-cur.execute('''CREATE VIEW Cusfood AS
-SELECT id,name,type,amount,description,price,restaurantId,score
-FROM food
-''')
 cur.execute('''CREATE VIEW Cusrestaurant AS
 SELECT id,name,phoneNumber,area,type,minOrder,score
 FROM restaurant
