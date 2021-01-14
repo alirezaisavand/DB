@@ -1,54 +1,30 @@
 import PySimpleGUI
-from graphics import *
+# img_viewer.py
 
-WINDOW_WIDTH, WINDOW_HEIGHT = 700, 700
+import PySimpleGUI as sg
+import client_query_handler
 
-win = GraphWin("client window", WINDOW_WIDTH, WINDOW_HEIGHT)
+layout = [[sg.Text('Enter username'), sg.InputText()],
+          [sg.Text('Enter password'), sg.InputText()],
+          [sg.Button('ok'), sg.Button('sing up')]]
 
-
-def initial_buttons():
-    singIn = Rectangle(Point(25, 55), Point(255, 285))  # points are ordered ll, ur
-    singUp = Rectangle(Point(25, 355), Point(255, 585))
-    quit = Rectangle(Point(85, 116), Point(315, 346))
-
-    singUp.setFill("red")
-    singIn.setFill("green")
-    text = Text(Point(100, 133), "Exit")
-    text.draw(win)
-
-    singUp.draw(win)
-    singIn.draw(win)
-    quit.draw(win)
-
-    return singUp, singIn, quit
-
-def inside(point, rectangle):
-    """ Is point inside rectangle? """
-
-    ll = rectangle.getP1()  # assume p1 is ll (lower left)
-    ur = rectangle.getP2()  # assume p2 is ur (upper right)
-
-    return ll.getX() < point.getX() < ur.getX() and ll.getY() < point.getY() < ur.getY()
-
-
-left, right, quit = initial_buttons()
-
-centerPoint = Point(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
-text = Text(centerPoint, "")
-text.draw(win)
-
+window = sg.Window("client app", layout)
+# Run the Event Loop
 while True:
-    clickPoint = win.getMouse()
-
-    if clickPoint is None:  # so we can substitute checkMouse() for getMouse()
-        text.setText("")
-    elif inside(clickPoint, left):
-        text.setText("left")
-    elif inside(clickPoint, right):
-        text.setText("right")
-    elif inside(clickPoint, quit):
+    event, values = window.read()
+    if event == "Exit" or event == sg.WIN_CLOSED:
         break
-    else:
-        text.setText("")
+    # Folder name was filled in, make a list of files in the folder
+    if event == "ok":
+        if client_query_handler.check_user_pass(values[0],values[1])==0:
+            layout = [[sg.Text('Enter username'), sg.InputText()],
+                      [sg.Text('Enter password'), sg.InputText()],
+                      [sg.Button('ok'), sg.Button('sing up')]]
 
-win.close()
+    elif event == "sing up":  # A file was chosen from the listbox
+        try:
+
+        except:
+            pass
+
+window.close()

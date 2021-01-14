@@ -18,7 +18,7 @@ def searchـrestaurant (by, str):
         print("phone number = ", row[2])
         print("area = ", row[3])
         print("type = ", row[4])
-        print("minOrder = ", row[5])
+        print("min_order = ", row[5])
         print("score = ", row[6], '\n')
 
 def restaurants_by_score ():
@@ -34,7 +34,7 @@ def restaurants_by_score ():
         print("phone number = ", row[2])
         print("area = ", row[3])
         print("type = ", row[4])
-        print("minOrder = ", row[5])
+        print("min_order = ", row[5])
         print("score = ", row[6], '\n')
 
 
@@ -126,7 +126,13 @@ def add_customer (id, password, name, area, phoner_number, balance):
     else:
         print("This user currently exists!")
 
-add_customer(id, password, name, area, phone_number, balance)
+def check_user_pass(id, password):
+    cur.execute("select * from user_pass where customer_id='" + id + "', password = '" + password + "';")
+    rows = cur.fetchall()
+
+    if len(rows):
+        return 1
+    return 0
 
 def rate_food(food_id, order_id, score):
     cur.execute("update CusfoodOrdered set score = " + str(score) + " where food_id = " + food_id + " and order_id = " + order_id + ";")
