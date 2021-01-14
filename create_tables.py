@@ -17,7 +17,7 @@ cur.execute('''create table restaurant
         area character('''+name_length+'''),
         type character('''+name_length+'''),
         score real,
-        minOrder integer);''')
+        min_order integer);''')
 
 cur.execute('''create table food
         (id character('''+token_length+''') primary key not null,
@@ -49,8 +49,8 @@ cur.execute('''create table discountCode
         (id character('''+token_length+''') primary key not null,
         percentage integer,
         max integer,
-        custId character('''+token_length+'''),
-        foreign key (custId) references customer(id));''')
+        customer_id character('''+token_length+'''),
+        foreign key (customer_id) references customer(id));''')
 
 cur.execute('''create table basket
         (customer_id character('''+token_length+''') not null,
@@ -62,30 +62,30 @@ cur.execute('''create table orderr
         (id character('''+token_length+''') primary key not null,
         restaurant_id character('''+token_length+''') not null,
         customer_id character('''+token_length+''') not null,
-        discountId character('''+token_length+''') not null,
-        preparingTime timestamp,
-        orderTime timestamp,
+        discount_id character('''+token_length+''') not null,
+        preparing_time timestamp,
+        order_time timestamp,
         total_price integer,
         foreign key (restaurant_id) references restaurant(id),
         foreign key (customer_id) references customer(id),
-        foreign key (discountId) references discountCode(id));''')
+        foreign key (discount_id) references discountCode(id));''')
 
 cur.execute('''create table sending
-        (orderId character('''+token_length+''') not null,
-        deliveryId character('''+token_length+''') not null,
+        (order_id character('''+token_length+''') not null,
+        delivery_id character('''+token_length+''') not null,
         score integer,
-        arrivingTime timestamp,
+        arriving_time timestamp,
         cost integer,
-        primary key (orderId, deliveryId),
-        foreign key (orderId) references orderr(id),
-        foreign key (deliveryId) references delivery(id));''')
+        primary key (order_id, delivery_id),
+        foreign key (order_id) references orderr(id),
+        foreign key (delivery_id) references delivery(id));''')
 
 cur.execute('''create table food_ordered
-        (orderId character('''+token_length+''') not null,
+        (order_id character('''+token_length+''') not null,
         food_id character('''+token_length+'''),
         score integer,
-        primary key (orderId, food_id),
-        foreign key (orderId) references orderr(id),
+        primary key (order_id, food_id),
+        foreign key (order_id) references orderr(id),
         foreign key (food_id) references food(id));''')
 
 cur.execute('''create table user_pass
