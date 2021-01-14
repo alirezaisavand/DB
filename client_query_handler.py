@@ -126,14 +126,6 @@ def add_customer (id, password, name, area, phoner_number, balance):
     else:
         print("This user currently exists!")
 
-
-id = input()
-password = input()
-name = input()
-area = input()
-phone_number = input()
-balance = input()
-
 add_customer(id, password, name, area, phone_number, balance)
 
 def rate_food(food_id, order_id, score):
