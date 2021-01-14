@@ -39,7 +39,10 @@ cur.execute('''CREATE VIEW CusfoodOrdered AS
 SELECT order_id,food_id,score
 FROM food_ordered
 ''')
-
+cur.execute('''CREATE VIEW Cusfood AS
+SELECT id,name,type,amount,description,price,restaurantId,score
+FROM food
+''')
 
 con.commit()
 print("views of Customer created successfully")
