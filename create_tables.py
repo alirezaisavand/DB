@@ -13,7 +13,7 @@ cur = con.cursor()
 cur.execute('''create table restaurant
         (id character('''+token_length+''') primary key not null,
         name character('''+name_length+'''),
-        phoneNumber character('''+phone_length+'''),
+        phone_number character('''+phone_length+'''),
         area character('''+name_length+'''),
         type character('''+name_length+'''),
         score real,
@@ -26,9 +26,9 @@ cur.execute('''create table food
         amount integer,
         description character('''+description_length+'''),
         price integer,
-        restaurantid character('''+token_length+'''),
+        restaurant_id character('''+token_length+'''),
         score real,
-        foreign key (restaurantid) references restaurant(id));''')
+        foreign key (restaurant_id) references restaurant(id));''')
 
 cur.execute('''create table delivery
         (id character('''+token_length+''') primary key not null,
@@ -41,7 +41,7 @@ cur.execute('''create table customer
         (id character('''+token_length+''') primary key not null,
         name character('''+name_length+'''),
         area character('''+name_length+'''),
-        phoneNumber character('''+phone_length+'''),
+        phone_number character('''+phone_length+'''),
         balance integer);''')
 
 
@@ -53,20 +53,21 @@ cur.execute('''create table discountCode
         foreign key (custId) references customer(id));''')
 
 cur.execute('''create table basket
-        (customerId character('''+token_length+''') not null,
-        foodId character('''+token_length+''') not null,
+        (customer_id character('''+token_length+''') not null,
+        food_id character('''+token_length+''') not null,
         amount integer,
-        primary key(customerId, foodId));''')
+        primary key(customer_id, food_id));''')
 
 cur.execute('''create table orderr
         (id character('''+token_length+''') primary key not null,
-        restaurantId character('''+token_length+''') not null,
-        customerId character('''+token_length+''') not null,
+        restaurant_id character('''+token_length+''') not null,
+        customer_id character('''+token_length+''') not null,
         discountId character('''+token_length+''') not null,
         preparingTime timestamp,
         orderTime timestamp,
-        foreign key (restaurantId) references restaurant(id),
-        foreign key (customerId) references customer(id),
+        total_price integer,
+        foreign key (restaurant_id) references restaurant(id),
+        foreign key (customer_id) references customer(id),
         foreign key (discountId) references discountCode(id));''')
 
 cur.execute('''create table sending
@@ -79,14 +80,17 @@ cur.execute('''create table sending
         foreign key (orderId) references orderr(id),
         foreign key (deliveryId) references delivery(id));''')
 
-cur.execute('''create table foodOrdered
+cur.execute('''create table food_ordered
         (orderId character('''+token_length+''') not null,
-        foodId character('''+token_length+'''),
+        food_id character('''+token_length+'''),
         score integer,
-        primary key (orderId, foodId),
+        primary key (orderId, food_id),
         foreign key (orderId) references orderr(id),
-        foreign key (foodId) references food(id));''')
+        foreign key (food_id) references food(id));''')
 
+cur.execute('''create table user_pass
+        (customer_id character('''+token_length+''') not null,
+        password character('''+token_length+''') not null);''')
 
 
 print("create tables are Done!")
