@@ -40,7 +40,7 @@ SELECT order_id,food_id,score
 FROM food_ordered
 ''')
 cur.execute('''CREATE VIEW Cusfood AS
-SELECT id,name,type,amount,description,price,restaurantId,score
+SELECT id,name,type,amount,description,price,restaurant_id,score
 FROM food
 ''')
 
