@@ -31,7 +31,7 @@ SELECT customer_id,food_id,amount
 FROM basket
 ''')
 cur.execute('''CREATE VIEW Cusorder AS
-SELECT id,restaurant_id,preparing_time,customer_id,order_time,discount_id
+SELECT id,restaurant_id,preparing_time,customer_id,order_time,discount_id, total_price
 FROM orderr
 ''')
 cur.execute('''CREATE VIEW Cussending AS
@@ -78,7 +78,7 @@ cur.execute('''CREATE VIEW Resrestaurant AS SELECT id, name, phone_number, area,
 cur.execute('''CREATE VIEW Resfood AS SELECT id, name, type, amount, description, price, restaurant_id from food''')
 cur.execute('''CREATE VIEW Resdelivery AS SELECT id,name,area,busy FROM delivery''')
 cur.execute('''CREATE VIEW Rescustomer AS SELECT id,name,area,phone_number from customer''')
-cur.execute('''CREATE VIEW Resorder AS SELECT id,restaurant_id,preparing_time,customer_id,order_time from orderr''')
+cur.execute('''CREATE VIEW Resorder AS SELECT id,restaurant_id,preparing_time,customer_id,order_time, total_price from orderr''')
 cur.execute('''CREATE VIEW Ressending AS SELECT order_id,delivery_id from sending''')
 cur.execute('''CREATE VIEW ResfoodOrdered AS SELECT order_id,food_id from food_ordered''')
 

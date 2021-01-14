@@ -138,23 +138,39 @@ def check_user_pass(username, password):
         return -1
     return rows[0][0]
 
-def rate_food(food_id, order_id, score):
-    cur.execute("update CusfoodOrdered set score = " + str(score) +
-                " where food_id = " + id_to_str(food_id) + " and order_id = " + id_to_str(order_id) + ";")
-
 def charge_account(customer_id, amount):
     cur.execute("select * from Cuscustomer where id = " + id_to_str(customer_id) + ";")
-    rows = cur.fetchall;
+    rows = cur.fetchall()
     if len(rows) == 0:
         print("Error")
         return
     balance = rows[0][4] + amount
     cur.execute("update Cuscustomer set balance = " + str(balance) +
                 " where id = " + id_to_str(customer_id) + ";")
+    print("account charged successfully")
 
 
 def rate_food(order_id, food_id, score):
     cur.execute("update CusfoodOrdered set score = " + str(score) +
                 " where order_id = " + id_to_str(order_id) + " and food_id = " + id_to_str(food_id) + ';')
+
+def get_customer_orders(customer_id):
+    cur.execute("select restaurant_id, preparing_time, order_time, discount_id, total_price from Cusorder where customer_id = " + id_to_str(customer_id) + ";")
+    orders_rows = cur.fetchall()
+    for row in orders_rows:
+        cur.execute("select name from Cusrestaurant where id = " + id_to_str(row[0]) + ";")
+        rows = cur.fetchall()
+        if len(rows) == 0:
+            print("Error")
+            return
+        restaurant_name = rows[0][0]
+        preparing_time = row[1]
+        order_time = row[2]
+        discount_id = row[3]
+        total_price = row[4]
+        print("restaurant: " + restaurant_name + " preparing time: " + preparing_time +
+              " order time: " + order_time + " discount id: " + discount_id + " total price: " + total_price)
+
+
 
 con.commit()
