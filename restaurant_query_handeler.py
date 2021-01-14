@@ -11,7 +11,7 @@ cur = con.cursor()
 
 
 def food_is_ready(order_id):
-    cur.execute('''UPDATE RESorder SET preparingTime = CURRENT_TIMESTAMP WHERE ordertId=''' + str(order_id))
+    cur.execute('''UPDATE Resorder SET preparingTime = CURRENT_TIMESTAMP WHERE ordertId=''' + str(order_id))
 
 
 def get_not_completed_order(restaurant_id):

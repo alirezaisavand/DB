@@ -108,5 +108,8 @@ def orderFood (customer, restaurant, food):
 
         print("food ordered!")
 
+def rate_food(food_id, score):
+
+
 con.commit()
 con.close()
