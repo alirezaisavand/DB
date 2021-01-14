@@ -21,6 +21,14 @@ def searchـrestaurant (by, str):
         print("minOrder = ", row[5])
         print("score = ", row[6], '\n')
 
+def check_user_pass(id,password):
+    cur.execute("select * from user_pass where customer_id='" + id + "', password = '" + password + "';")
+    rows = cur.fetchall()
+
+    for row in rows:
+        return 1
+    return 0
+
 def restaurants_by_score ():
     cur.execute("select * from restaurant;")
     rows = cur.fetchall()
