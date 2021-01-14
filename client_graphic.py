@@ -17,10 +17,12 @@ while True:
     # Folder name was filled in, make a list of files in the folder
     if event == "ok":
         if client_query_handler.check_user_pass(values[0],values[1])==0:
-            layout = [[sg.Text('Enter username'), sg.InputText()],
+            layout = [[sg.Text('wrong user pass')],
+                       [sg.Text('Enter username'), sg.InputText()],
                       [sg.Text('Enter password'), sg.InputText()],
                       [sg.Button('ok'), sg.Button('sing up')]]
-
+        else:
+            my_user=values[0]
     elif event == "sing up":  # A file was chosen from the listbox
         try:
 
