@@ -90,7 +90,7 @@ def order_food (customer_id, resturant_id, food_id):
     else:
         amount -= 1
         cur.execute("update food set amount = " + str(amount) + " where name = '"
-                + food + "' and resturant_id = '" + resturant_id + "';")
+                + food_id + "' and resturant_id = '" + resturant_id + "';")
 
         balance -= price
         cur.execute("update customer set balance = " + str(balance)
@@ -106,8 +106,14 @@ def add_client (id, name, area, phoner_number, balance):
                 + area + "', '" + phoner_number + "', " + str(balance)
                 + ");")
 
-def rate_food(food_id, score):
-    cur.execute("select * from foodRatings")
+def rate_food(food_id, order_id, score):
+    cur.execute("update CusfoodOrdered set score = " + str(score) + " where food_id = " + food_id + " and order_id = " + order_id + ";")
+
+def charge_account(customer_id, amount):
+    cur.execute("update Cuscustomer set balance = " + str(amount) + " where id = " + customer_id + ";")
+
+def get_ordered_list(customer_id):
+
 
 con.commit()
 con.close()
