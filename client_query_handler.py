@@ -101,6 +101,13 @@ def order_food (customer_id, resturant_id, food_id):
 
         print("food ordered!")
 
+def add_client (id, name, area, phoner_number, balance):
+    cur.execute("insert into customer values('" + id + "', '" + name + "', '"
+                + area + "', '" + phoner_number + "', " + str(balance)
+                + ");")
+
+add_client(id, name, area, phoner_number, balance)
+
 def rate_food(food_id, score):
     cur.execute("select * from foodRatings")
 
