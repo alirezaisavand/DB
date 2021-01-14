@@ -92,6 +92,7 @@ cur.execute('''create table user_pass
         (customer_id character('''+token_length+''') not null,
         password character('''+token_length+''') not null);''')
 
+
 print("create tables are Done!")
 
 con.commit()
