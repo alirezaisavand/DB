@@ -2,8 +2,8 @@
   "postgresql":{
         "host":"127.0.0.1",
         "user":"postgres",
-        "password":"Ali13431352",
-        "database":"snapfood",
+        "password":"Ckodser1380",
+        "database":"DB99",
         "port":"5432",
         "token_length": "30",
         "name_length": "30",
