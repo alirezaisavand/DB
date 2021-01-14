@@ -7,7 +7,7 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
 
 cur = con.cursor()
 
-#cur.execute('''drop view Cusfood''')
+cur.execute('''drop view Cusfood''')
 cur.execute('''drop view Cusrestaurant''')
 cur.execute('''drop view Cusdelivery''')
 cur.execute('''drop view CusdiscountCode''')
