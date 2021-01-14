@@ -1,5 +1,6 @@
 import psycopg2
 import json
+import Id_handler
 
 f = open('config_file.JSON')
 data = json.load(f)
@@ -113,21 +114,20 @@ def order_food (customer_id, restaurant_id, food_id):
 
         print("food ordered!")
 
-def add_customer (id, password, name, area, phoner_number, balance):
-    cur.execute("select * from customer where id = '" + id + "';")
+def add_customer (username, password, name, area, phoner_number):
+    cur.execute("select * from customer where id = '" + username + "';")
     rows = cur.fetchall()
-
-    if (len(rows) == 0):
+    id=Id_handler.get_new_id()
+    if len(rows) == 0:
         cur.execute("insert into customer values('" + id + "', '" + name + "', '"
-                    + area + "', '" + phoner_number + "', " + str(balance)
+                    + area + "', '" + phoner_number + "', " + str(0)
                     + ");")
-        cur.execute("insert into user_pass values('" + id + "', '" + password
-                    + "');")
+        cur.execute("insert into user_pass values('" + id + "', '" + password + "' , '"+username+"');")
     else:
         print("This user currently exists!")
 
 def check_user_pass(username, password):
-    cur.execute("select customer_id from user_pass where username='" +username + "', password = '" + password + "';")
+    cur.execute("select customer_id from user_pass where username='" +username + "' and  password = '" + password + "';")
     rows = cur.fetchall()
 
     if len(rows)==0:
@@ -145,4 +145,3 @@ def rate_food(food_id, score):
     cur.execute("select * from foodRatings")
 
 con.commit()
-con.close()
