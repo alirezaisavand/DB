@@ -159,7 +159,8 @@ def get_customer_orders(customer_id):
                 + id_to_str(customer_id) + ";")
     orders_rows = cur.fetchall()
     for row in orders_rows:
-        cur.execute("select name from Cusrestaurant where id = " + id_to_str(row[0]) + ";")
+        restaurant_id = row[0]
+        cur.execute("select name from Cusrestaurant where id = " + id_to_str(restaurant_id) + ";")
         rows = cur.fetchall()
         if len(rows) == 0:
             print("Error")
@@ -174,9 +175,18 @@ def get_customer_orders(customer_id):
         rows = cur.fetchall()
         arriving_time = rows[0][0]
 
+
         print("restaurant: " + restaurant_name + " preparing time: " + preparing_time +
               " order time: " + order_time + " arriving time: " + arriving_time + " discount id: " + discount_id +
               " total price: " + total_price)
+        cur.execute("select food_id from CusfoodOrdered where order_id = " + id_to_str(order_id) + ";")
+        rows = cur.fetchall()
+        for row in rows:
+            food_id = row[0]
+            cur.execute("select name from Cusfood where id = " + id_to_str(food_id) + ";")
+            food_rows = cur.fetchall()
+            food_name = food_rows[0][0]
+            print("food name: " + food_name)
 
 def receive_order(order_id):
     cur.execute("select * from Cussending where order_id = " + id_to_str(order_id) + ";")
