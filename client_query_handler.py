@@ -126,13 +126,13 @@ def add_customer (id, password, name, area, phoner_number, balance):
     else:
         print("This user currently exists!")
 
-def check_user_pass(id, password):
-    cur.execute("select * from user_pass where customer_id='" + id + "', password = '" + password + "';")
+def check_user_pass(username, password):
+    cur.execute("select customer_id from user_pass where username='" +username + "', password = '" + password + "';")
     rows = cur.fetchall()
 
-    if len(rows):
-        return 1
-    return 0
+    if len(rows)==0:
+        return -1
+    return rows[0][0]
 
 def rate_food(food_id, order_id, score):
     cur.execute("update CusfoodOrdered set score = " + str(score) + " where food_id = " + food_id + " and order_id = " + order_id + ";")
