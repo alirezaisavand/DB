@@ -7,15 +7,15 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
 
 cur = con.cursor()
 
-cur.execute('''drop table restaurant''')
-cur.execute('''drop table food''')
-cur.execute('''drop table delivery''')
-cur.execute('''drop table customer''')
-cur.execute('''drop table discountCode''')
-cur.execute('''drop table basket''')
-cur.execute('''drop table orderr''')
-cur.execute('''drop table sending''')
 cur.execute('''drop table foodOrdered''')
+cur.execute('''drop table sending''')
+cur.execute('''drop table orderr''')
+cur.execute('''drop table basket''')
+cur.execute('''drop table discountCode''')
+cur.execute('''drop table customer''')
+cur.execute('''drop table delivery''')
+cur.execute('''drop table food''')
+cur.execute('''drop table restaurant''')
 
 print("Drop all tables Done!")
 

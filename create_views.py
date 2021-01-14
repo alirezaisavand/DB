@@ -6,6 +6,9 @@ data = json.load(f)
 con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postgresql"]["user"],password=data["postgresql"]["password"], host=data["postgresql"]["host"], port=data["postgresql"]["port"])
 
 cur = con.cursor()
+
+cur.execute('''CREATE VIEW CusfoodRatings AS 
+SELECT foodId, score, ''')
 cur.execute('''CREATE VIEW Cusfood AS
 SELECT id,name,type,amount,description,price,restaurantId,score
 FROM food

@@ -10,14 +10,6 @@ phone_length = data["postgresql"]["phone_length"]
 description_length = data["postgresql"]["description_length"]
 
 cur = con.cursor()
-
-cur.execute('''create table foodRatings(
-                    foodId character(''' +token_length+''') not null, 
-                    sum integer, 
-                    count integer,
-                    primary key (foodId)
-                    );''')
-
 cur.execute('''create table restaurant
         (id character('''+token_length+''') primary key not null,
         name character('''+name_length+'''),

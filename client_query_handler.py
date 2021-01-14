@@ -109,7 +109,7 @@ def orderFood (customer, restaurant, food):
         print("food ordered!")
 
 def rate_food(food_id, score):
-
+    cur.execute("select * from foodRatings")
 
 con.commit()
 con.close()
