@@ -8,7 +8,7 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
                        port=data["postgresql"]["port"])
 cur = con.cursor()
 
-def searchRestaurant (by, str):
+def searchـrestaurant (by, str):
     cur.execute("select * from restaurant where " + by + " = '" + str + "';")
     rows = cur.fetchall()
 
@@ -21,7 +21,7 @@ def searchRestaurant (by, str):
         print("minOrder = ", row[5])
         print("score = ", row[6], '\n')
 
-def restaurantsByScore ():
+def restaurants_by_score ():
     cur.execute("select * from restaurant;")
     rows = cur.fetchall()
 
@@ -38,7 +38,7 @@ def restaurantsByScore ():
         print("score = ", row[6], '\n')
 
 
-def searchFood (by, str):
+def search_food (by, str):
     cur.execute("select * from food where " + by + " = '" + str + "';")
     rows = cur.fetchall()
 
@@ -49,10 +49,10 @@ def searchFood (by, str):
         print("amount = ", row[3])
         print("description = ", row[4])
         print("price = ", row[5])
-        print("restaurantid = ", row[6])
+        print("resturant_id = ", row[6])
         print("score = ", row[7], '\n')
 
-def foodsByScore ():
+def foods_by_score ():
     cur.execute("select * from food;")
     rows = cur.fetchall()
 
@@ -66,29 +66,22 @@ def foodsByScore ():
         print("amount = ", row[3])
         print("description = ", row[4])
         print("price = ", row[5])
-        print("restaurantid = ", row[6])
+        print("resturant_id = ", row[6])
         print("score = ", row[7], '\n')
 
 
-def orderFood (customer, restaurant, food):
-    cur.execute("select * from customer where name = '" + customer + "';")
+def order_food (customer_id, resturant_id, food_id):
+    cur.execute("select * from customer where id = '" + customer_id + "';")
     rows = cur.fetchall()
-    customerId = rows[0][0]
     balance = rows[0][4]
 
-    cur.execute("select * from restaurant where name = '" + restaurant + "';")
-    rows = cur.fetchall()
-
-    restaurantId = rows[0][0]
-
-    cur.execute("select * from food where name = '" + food +
-                "' and restaurantId = '" + restaurantId + "';")
+    cur.execute("select * from food where id = '" + food_id +
+                "' and resturant_id = '" + resturant_id + "';")
 
     rows = cur.fetchall()
 
     price = rows[0][5]
     amount = rows[0][3]
-    foodId = rows[0][0]
 
     if balance < price:
         print("Customer doesn't have enough money!")
@@ -97,13 +90,13 @@ def orderFood (customer, restaurant, food):
     else:
         amount -= 1
         cur.execute("update food set amount = " + str(amount) + " where name = '"
-                + food + "' and restaurantId = '" + restaurantId + "';")
+                + food + "' and resturant_id = '" + resturant_id + "';")
 
         balance -= price
         cur.execute("update customer set balance = " + str(balance)
-                + " where id = '" + customerId + "';")
+                + " where id = '" + customer_id + "';")
 
-        cur.execute("insert into basket values('" + customerId + "', '" + foodId
+        cur.execute("insert into basket values('" + customer_id + "', '" + food_id
                 + "', 1);")
 
         print("food ordered!")
