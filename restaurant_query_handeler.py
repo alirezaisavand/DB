@@ -46,15 +46,6 @@ def increase_amount(food_id, amount):
     con.commit()
 
 
-def add_new_restaurant(name, phone_number, area, type, min_order):
-    id = Id_handler.get_new_id()
-    cur.execute(
-        "INSERT INTO RESrestaurant VALUES('" + id + "','" + name + "','"
-        + phone_number + "','" + area + "','" + type + "'," + str(min_order) + ")")
-    con.commit()
-    return id
-
-
 # new queries
 def get_restaurant_orders(restaurant_id, filter_arrived):
     cur.execute("select * from Resorder where restaurant_id = " + id_to_str(restaurant_id) + " order by order_time;")
@@ -91,3 +82,42 @@ def get_restaurant_orders(restaurant_id, filter_arrived):
             food_rows = cur.fetchall()
             food_name = food_rows[0][0]
             print("food name: " + food_name)
+
+def check_user_pass(username, password):
+    cur.execute(
+        "select restaurant_id from res_user_pass where username=" + id_to_str(username) + " and  password = " + id_to_str(password) + ";")
+    rows = cur.fetchall()
+    con.commit()
+    if len(rows) == 0:
+        return -1
+    return rows[0][0]
+
+
+def add_restaurant(username, password, name, area, phone_number, type, min_order):
+    print("NEW RESTAURANT")
+    cur.execute("select * from res_user_pass where username = " + id_to_str(username) + ";")
+    rows = cur.fetchall()
+    id = Id_handler.get_new_id()
+    if len(rows) == 0:
+        cur.execute("insert into restaurant values(" +
+                    id_to_str(id) + ", " +
+                    id_to_str(name) + ", " +
+                    id_to_str(phone_number) + ", " +
+                    id_to_str(area) + ", " +
+                    id_to_str(type) + ", " +
+                    "0, " +
+                    str(min_order) +
+                    ");"
+                    )
+        cur.execute("insert into res_user_pass values(" +
+                    id_to_str(id) + ", " +
+                    id_to_str(password) + ", " +
+                    id_to_str(username) +
+                    ");"
+                    )
+        con.commit()
+        return 1
+    else:
+        print("this user currently exists!")
+        con.commit()
+        return 0

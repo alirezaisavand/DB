@@ -96,6 +96,12 @@ cur.execute('''create table user_pass
         primary key (customer_id)
         );''')
 
+cur.execute('''create table res_user_pass(
+            restaurant_id character('''+token_length+''') not null,
+            password character('''+token_length+''') not null,
+            username character('''+token_length+''') not null,
+            primary key (restaurant_id)
+            );''')
 
 print("create tables are Done!")
 
