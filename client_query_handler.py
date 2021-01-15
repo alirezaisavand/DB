@@ -23,8 +23,20 @@ def get_client_info(id):
     return None
 
 
+def get_condition(by, ans):
+    if len(by) == 0:
+        return ""
+    st = " where "
+    for i in range(0, len(by)):
+        if i != 0:
+            st += " and "
+        st += by[i] + " = '" + ans[i] + "'"
+    return st
+
+
 def searchـrestaurant(by, str):
-    cur.execute("select * from cusrestaurant where " + by + " = '" + str + "';")
+    st = get_condition(by, str)
+    cur.execute("select * from cusrestaurant " + st + ";")
     rows = cur.fetchall()
     for row in rows:
         print("id = ", row[0])
@@ -55,17 +67,8 @@ def restaurants_by_score():
 
 
 def search_food(by, str):
-    cur.execute("select * from cusfood where " + by + " = '" + str + "';")
+    cur.execute("select * from cusfood"+get_condition(by,str)+";")
     rows = cur.fetchall()
-    for row in rows:
-        print("id = ", row[0])
-        print("name = ", row[1])
-        print("type = ", row[2])
-        print("amount = ", row[3])
-        print("description = ", row[4])
-        print("price = ", row[5])
-        print("restaurant_id = ", row[6])
-        print("score = ", row[7], '\n')
     return rows
 
 

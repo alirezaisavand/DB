@@ -43,9 +43,9 @@ def order_rows_to_list(rows):
 
 def after_set_restaurant(user_data, user_token, restaurant_name):
     while True:
-        restaurant_id = client_query_handler.searchـrestaurant("name", restaurant_name)[0][0]
+        restaurant_id = client_query_handler.searchـrestaurant(["name"], [restaurant_name])[0][0]
 
-        rows = client_query_handler.search_food("restaurant_id", restaurant_id)
+        rows = client_query_handler.search_food(["restaurant_id"], [restaurant_id])
         l = food_rows_to_list(rows)
         print(l)
         layout = [
@@ -68,7 +68,7 @@ def after_set_restaurant(user_data, user_token, restaurant_name):
             window.close()
             food_name = values["-LIST-"][0].split()[1]
             # after enabling multisearch filter add restorant_id
-            food_id = client_query_handler.search_food("name", food_name)[0][0]
+            food_id = client_query_handler.search_food(["name"], [food_name])[0][0]
             client_query_handler.order_food(user_token, restaurant_id, food_id)
             after_set_restaurant(user_data, user_token, restaurant_name)
 
@@ -109,7 +109,7 @@ def my_basket(user_token, user_data):
 
 def order_food(user_data, user_token):
     while True:
-        rows = client_query_handler.searchـrestaurant("area", user_data[2])
+        rows = client_query_handler.searchـrestaurant(["area"], [user_data[2]])
         l = restaurant_rows_to_list(rows)
         print(l)
         layout = [
