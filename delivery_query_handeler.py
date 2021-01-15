@@ -33,10 +33,7 @@ def update_delivery_salary(delivery_id, new_salary):
 
 
 def add_new_delivery(name, salary, area):
-    cur.execute(
-        '''INSERT INTO Deldelivery(name,salary,area,busy) VALUES(''' + Id_handler.get_new_id() + "," + name + "," + str(
-            salary) + " " + area + ",0)")
-
+    cur.execute("INSERT INTO Deldelivery VALUES('" + Id_handler.get_new_id() + "','" + name + "'," + str(
+            salary) + ",'" + area + "',false)")
 
 con.commit()
-con.close()

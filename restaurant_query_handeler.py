@@ -27,7 +27,11 @@ def get_not_completed_order(restaurant_id):
 
 
 def add_food_to_restaurant(restaurant_id, food_name, food_type, food_description, food_price):
-    print("add_food_to_restaurant in the restaurant_query_handler is remain unwrited!")
+    id = Id_handler.get_new_id()
+    cur.execute("INSERT INTO RESfood VALUES('" + id + "','" + food_name + "','" + food_type + "',0,'"
+                + food_description + "'," + str(food_price) + ",'" + restaurant_id + "');")
+    con.commit()
+    return id
 
 
 def set_delivery_for_order(order_id, delivery_id):
@@ -45,8 +49,8 @@ def increase_amount(food_id, amount):
 def add_new_restaurant(name, phone_number, area, type, min_order):
     id = Id_handler.get_new_id()
     cur.execute(
-        '''INSERT INTO RESrestaurant(id,name,phoneNumber,area,type,minOrder,score) VALUES(''' + id +
-        "," + name + "," + str(phone_number) + " " + area + "," + type + "," + str(min_order) + ",0)")
+        "INSERT INTO RESrestaurant VALUES('" + id + "','" + name + "','"
+        + phone_number + "','" + area + "','" + type + "'," + str(min_order) + ")")
     con.commit()
     return id
 
@@ -87,7 +91,3 @@ def get_restaurant_orders(restaurant_id, filter_arrived):
             food_rows = cur.fetchall()
             food_name = food_rows[0][0]
             print("food name: " + food_name)
-
-
-con.commit()
-con.close()
