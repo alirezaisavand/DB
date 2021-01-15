@@ -7,44 +7,107 @@ import client_query_handler
 def restaurant_rows_to_list(rows):
     l = []
     for row in rows:
-        l.append("name : " + row[1] + "---type : " + row[4] + "---score : " + row[6])
+        l.append("name : " + row[1] + "---type : " + row[4] + "---score : " + str(row[6]))
     return l
 
 
 def food_rows_to_list(rows):
     l = []
     for row in rows:
-        l.append("name : " + row[1] + "---type : " + row[4] + "---score : " + row[6])
+        l.append("name: " + row[1] + "-type: " + row[2] + "-remain: " + str(row[3]) + "-price:" + str(
+            row[5]) + "-score:" + str(row[7]))
     return l
 
+def basket_food_rows_to_list(rows):
+    l = []
+    for row in rows:
+        l.append("name: " + row[0] + "-amount: " + str(row[1]))
+    return l
 
 def after_set_restaurant(user_data, user_token, restaurant_name):
-    print("injash monde!")
+    restaurant_id = client_query_handler.searchـrestaurant("name", restaurant_name)[0][0]
 
-
-def order_food(user_data, user_token):
-    rows = client_query_handler.searchـrestaurant("area", user_data[2])
-    l = restaurant_rows_to_list(rows)
+    rows = client_query_handler.search_food("restaurant_id", restaurant_id)
+    l = food_rows_to_list(rows)
+    print(l)
     layout = [
         [sg.Text('balance:' + str(user_data[4]))],
-        [sg.Text('restaurant in your area')],
-        [sg.Listbox(values=l, size=(20, 12), key='-LIST-', enable_events=True)],
-        [sg.Button("best restaurant")]]
+        [sg.Text(str(restaurant_name))],
+        [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+        [sg.Button("Done!"),sg.Button("home page")]]
 
     window = sg.Window("client app", layout)
     while True:
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
-        elif event == "":
-            client_query_handler.charge_account(user_token, int(values[0]))
-            continue
-        elif event == "order food":
-            order_food(user_data, user_token)
+        elif event == "home page":
+            window.close()
+            home_page(user_token)
+        elif event == "-LIST-":
+            window.close()
+            food_name = values["-LIST-"][0].split()[1]
+            # after enabling multisearch filter add restorant_id
+            food_id = client_query_handler.search_food("name", food_name)[0][0]
+            client_query_handler.order_food(user_token, restaurant_id, food_id)
+            after_set_restaurant(user_data,user_token,restaurant_name)
+        elif event == "Done!":
+            window.close()
+            home_page(user_token)
+
+
+def my_basket(user_token,user_data):
+    rows=client_query_handler.get_customer_basket(user_token)
+    l = basket_food_rows_to_list(rows)
+    print(l)
+    layout = [
+        [sg.Text('balance:' + str(user_data[4]))],
+        [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+        [sg.Button("buy!"),sg.Button("home page")]]
+
+    window = sg.Window("client app", layout)
+    while True:
+        event, values = window.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        elif event == "home page":
+            window.close()
+            home_page(user_token)
+        elif event == "buy!":
+            print("client.buy")
+          #  client_query_handler.b
+            window.close()
+            home_page(user_token)
+
+
+def order_food(user_data, user_token):
+    rows = client_query_handler.searchـrestaurant("area", user_data[2])
+    l = restaurant_rows_to_list(rows)
+    print(l)
+    layout = [
+        [sg.Text('balance:' + str(user_data[4]))],
+        [sg.Text('restaurant in your area')],
+        [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+        [sg.Button("home page")]]
+
+    window = sg.Window("client app", layout)
+    while True:
+        event, values = window.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        elif event == "home page":
+            window.close()
+            home_page(user_token)
+        elif event == "-LIST-":
+            window.close()
+            after_set_restaurant(user_data, user_token, values["-LIST-"][0].split()[2])
         window.close()
         home_page(user_token)
         return
 
+def my_order(user_token):
+    rows=client_query_handler.get_customer_orders()
+    print("NOT ComPLiTED:(")
 
 def home_page(user_token):
     print("welcome")
@@ -53,7 +116,7 @@ def home_page(user_token):
     layout = [
         [sg.Text('balance:' + str(user_data[4]))],
         [sg.Text('charge account'), sg.InputText(), sg.Button("charge")],
-        [sg.Button("order food")]]
+        [sg.Button("order food"),sg.Button("buy basket"),sg.Button("my orders")]]
     window = sg.Window("client app", layout)
     while True:
         event, values = window.read()
@@ -66,6 +129,12 @@ def home_page(user_token):
         elif event == "order food":
             window.close()
             order_food(user_data, user_token)
+        elif event == "my orders":
+            window.close()
+            my_order(user_token)
+        elif event == "buy basket":
+            window.close()
+            my_basket(user_token,user_data)
         window.close()
         home_page(user_token)
         return

@@ -37,4 +37,7 @@ delivery_query_handeler.add_new_delivery("mojan", 50, "3")
 delivery_query_handeler.add_new_delivery("raha", 79, "4")
 delivery_query_handeler.add_new_delivery("arshia", 90, "4")
 
+#add test customer
+client_query_handler.add_customer("test","test","arshia","2","9128381385")
+
 print("initial data added to the data base")

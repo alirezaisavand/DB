@@ -9,9 +9,11 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
                        port=data["postgresql"]["port"])
 cur = con.cursor()
 
+
 def id_to_str(id):
     str_id = "\'" + id + "\'"
     return str_id
+
 
 def get_client_info(id):
     cur.execute("select * from cuscustomer where id = '" + id + "';")
@@ -20,7 +22,8 @@ def get_client_info(id):
         return row
     return None
 
-def searchـrestaurant (by, str):
+
+def searchـrestaurant(by, str):
     cur.execute("select * from cusrestaurant where " + by + " = '" + str + "';")
     rows = cur.fetchall()
     for row in rows:
@@ -33,7 +36,8 @@ def searchـrestaurant (by, str):
         print("score = ", row[6], '\n')
     return rows
 
-def restaurants_by_score ():
+
+def restaurants_by_score():
     cur.execute("select * from cusrestaurant;")
     rows = cur.fetchall()
 
@@ -50,7 +54,7 @@ def restaurants_by_score ():
     return rows
 
 
-def search_food (by, str):
+def search_food(by, str):
     cur.execute("select * from cusfood where " + by + " = '" + str + "';")
     rows = cur.fetchall()
     for row in rows:
@@ -64,7 +68,8 @@ def search_food (by, str):
         print("score = ", row[7], '\n')
     return rows
 
-def foods_by_score ():
+
+def foods_by_score():
     cur.execute("select * from food;")
     rows = cur.fetchall()
 
@@ -82,7 +87,7 @@ def foods_by_score ():
     return rows
 
 
-def order_food (customer_id, restaurant_id, food_id):
+def order_food(customer_id, restaurant_id, food_id):
     cur.execute("select * from customer where id = '" + customer_id + "';")
     rows = cur.fetchall()
     balance = rows[0][4]
@@ -102,11 +107,11 @@ def order_food (customer_id, restaurant_id, food_id):
     else:
         amount -= 1
         cur.execute("update food set amount = " + str(amount) + " where id = '"
-                + food_id + "' and restaurant_id = '" + restaurant_id + "';")
+                    + food_id + "' and restaurant_id = '" + restaurant_id + "';")
 
         balance -= price
         cur.execute("update customer set balance = " + str(balance)
-                + " where id = '" + customer_id + "';")
+                    + " where id = '" + customer_id + "';")
 
         cur.execute("select * from basket where customer_id = '" + customer_id
                     + "' and food_id = '" + food_id + "';")
@@ -126,16 +131,17 @@ def order_food (customer_id, restaurant_id, food_id):
         print("food ordered!")
     con.commit()
 
-def add_customer (username, password, name, area, phoner_number):
+
+def add_customer(username, password, name, area, phoner_number):
     print("NEW CUSTOMER")
     cur.execute("select * from customer where id = '" + username + "';")
     rows = cur.fetchall()
-    id=Id_handler.get_new_id()
+    id = Id_handler.get_new_id()
     if len(rows) == 0:
         cur.execute("insert into customer values('" + id + "', '" + name + "', '"
                     + area + "', '" + phoner_number + "', " + str(0)
                     + ");")
-        cur.execute("insert into user_pass values('" + id + "', '" + password + "' , '"+username+"');")
+        cur.execute("insert into user_pass values('" + id + "', '" + password + "' , '" + username + "');")
         con.commit()
         return 1
     else:
@@ -143,13 +149,16 @@ def add_customer (username, password, name, area, phoner_number):
         con.commit()
         return 0
 
+
 def check_user_pass(username, password):
-    cur.execute("select customer_id from user_pass where username='" +username + "' and  password = '" + password + "';")
+    cur.execute(
+        "select customer_id from user_pass where username='" + username + "' and  password = '" + password + "';")
     rows = cur.fetchall()
     con.commit()
-    if len(rows)==0:
+    if len(rows) == 0:
         return -1
     return rows[0][0]
+
 
 def charge_account(customer_id, amount):
     cur.execute("select * from Cuscustomer where id = " + id_to_str(customer_id) + ";")
@@ -169,9 +178,17 @@ def rate_food(order_id, food_id, score):
                 " where order_id = " + id_to_str(order_id) + " and food_id = " + id_to_str(food_id) + ';')
     con.commit()
 
+
+def get_customer_basket(customer_id):
+    cur.execute("select food_id, amount from basket where customer_id = "
+                + id_to_str(customer_id) + ";")
+    return cur.fetchall()
+
+
 def get_customer_orders(customer_id):
-    cur.execute("select restaurant_id, preparing_time, order_time, discount_id, total_price, order_id from Cusorder where customer_id = "
-                + id_to_str(customer_id) + " order by order_time;")
+    cur.execute(
+        "select restaurant_id, preparing_time, order_time, discount_id, total_price, order_id from Cusorder where customer_id = "
+        + id_to_str(customer_id) + " order by order_time;")
     orders_rows = cur.fetchall()
     for row in orders_rows:
         restaurant_id = row[0]
@@ -190,7 +207,6 @@ def get_customer_orders(customer_id):
         rows = cur.fetchall()
         arriving_time = rows[0][0]
 
-
         print("restaurant: " + restaurant_name + " preparing time: " + preparing_time +
               " order time: " + order_time + " arriving time: " + arriving_time + " discount id: " + discount_id +
               " total price: " + total_price)
@@ -204,6 +220,7 @@ def get_customer_orders(customer_id):
             print("food name: " + food_name)
     con.commit()
 
+
 def receive_order(order_id):
     cur.execute("select * from Cussending where order_id = " + id_to_str(order_id) + ";")
     rows = cur.fetchall()
@@ -214,5 +231,6 @@ def receive_order(order_id):
     cur.execute("update Cusdelivery set busy = false where id = " + id_to_str(delivery_id) + ";")
     cur.execute("update Cussending set arriving_time = CURRENT_TIMESTAMP where order_id = " + id_to_str(order_id) + ";")
     con.commit()
+
 
 con.commit()

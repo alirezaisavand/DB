@@ -16,7 +16,7 @@ cur.execute('''create table restaurant
         phone_number character('''+phone_length+'''),
         area character('''+name_length+'''),
         type character('''+name_length+'''),
-        score real,
+        score real DEFAULT 0,
         min_order integer);''')
 
 cur.execute('''create table food
@@ -27,7 +27,7 @@ cur.execute('''create table food
         description character('''+description_length+'''),
         price integer,
         restaurant_id character('''+token_length+'''),
-        score real,
+        score real DEFAULT 0,
         foreign key (restaurant_id) references restaurant(id));''')
 
 cur.execute('''create table delivery

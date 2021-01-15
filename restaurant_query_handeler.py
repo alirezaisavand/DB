@@ -28,7 +28,7 @@ def get_not_completed_order(restaurant_id):
 
 def add_food_to_restaurant(restaurant_id, food_name, food_type, food_description, food_price):
     id = Id_handler.get_new_id()
-    cur.execute("INSERT INTO RESfood VALUES('" + id + "','" + food_name + "','" + food_type + "',0,'"
+    cur.execute("INSERT INTO RESfood VALUES('" + id + "','" + food_name + "','" + food_type + "',1,'"
                 + food_description + "'," + str(food_price) + ",'" + restaurant_id + "');")
     con.commit()
     return id
