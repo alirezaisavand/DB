@@ -14,6 +14,7 @@ def id_to_str(id):
     str_id = "\'" + id + "\'"
     return str_id
 
+
 def food_is_ready(order_id):
     cur.execute('''UPDATE Resorder SET preparingTime = CURRENT_TIMESTAMP WHERE ordertId=''' + str(order_id))
 
@@ -25,6 +26,10 @@ def get_not_completed_order(restaurant_id):
     return cur.fetchall()
 
 
+def add_food_to_restaurant(restaurant_id, food_name, food_type, food_description, food_price):
+    print("add_food_to_restaurant in the restaurant_query_handler is remain unwrited!")
+
+
 def set_delivery_for_order(order_id, delivery_id):
     cur.execute('''INSERT INTO Ressending(orderId,deliveryId) VALUES(''' + str(order_id) + "," + str(delivery_id) + ")")
 
@@ -34,14 +39,19 @@ def increase_amount(food_id, amount):
     rows = cur.fetchall()
     amount += rows[0][0]
     cur.execute('''UPDATE Resfood SET amount=''' + str(amount) + ''' WHERE Id=''' + str(food_id) + ")")
+    con.commit()
 
 
 def add_new_restaurant(name, phone_number, area, type, min_order):
+    id = Id_handler.get_new_id()
     cur.execute(
-        '''INSERT INTO RESrestaurant(id,name,phoneNumber,area,type,minOrder,score) VALUES(''' + Id_handler.get_new_id() +
+        '''INSERT INTO RESrestaurant(id,name,phoneNumber,area,type,minOrder,score) VALUES(''' + id +
         "," + name + "," + str(phone_number) + " " + area + "," + type + "," + str(min_order) + ",0)")
+    con.commit()
+    return id
 
-#new queries
+
+# new queries
 def get_restaurant_orders(restaurant_id, filter_arrived):
     cur.execute("select * from Resorder where restaurant_id = " + id_to_str(restaurant_id) + " order by order_time;")
     orders_rows = cur.fetchall()
@@ -61,10 +71,10 @@ def get_restaurant_orders(restaurant_id, filter_arrived):
         arriving_time = cur.fetchall()[0][0]
 
         if filter_arrived:
-            cur.execute("select order_id from Ressending where order_id = " + id_to_str(order_id) + " and arriving_time is null;")
+            cur.execute("select order_id from Ressending where order_id = " + id_to_str(
+                order_id) + " and arriving_time is null;")
             if len(cur.fetchall()) == 0:
                 continue
-
 
         print("customer name: " + customer_name + " preparing time: " + preparing_time +
               " order time: " + order_time + " arriving time: " + arriving_time +
@@ -77,6 +87,7 @@ def get_restaurant_orders(restaurant_id, filter_arrived):
             food_rows = cur.fetchall()
             food_name = food_rows[0][0]
             print("food name: " + food_name)
+
 
 con.commit()
 con.close()
