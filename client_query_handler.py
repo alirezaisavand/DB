@@ -16,7 +16,6 @@ def id_to_str(id):
 def get_client_info(id):
     cur.execute("select * from cuscustomer where id = '" + id + "';")
     rows = cur.fetchall()
-    con.commit()
     for row in rows:
         return row
     return None
@@ -24,7 +23,6 @@ def get_client_info(id):
 def searchـrestaurant (by, str):
     cur.execute("select * from cusrestaurant where " + by + " = '" + str + "';")
     rows = cur.fetchall()
-    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -33,6 +31,7 @@ def searchـrestaurant (by, str):
         print("type = ", row[4])
         print("min_order = ", row[5])
         print("score = ", row[6], '\n')
+    return rows
 
 def restaurants_by_score ():
     cur.execute("select * from cusrestaurant;")
@@ -40,7 +39,6 @@ def restaurants_by_score ():
 
     rows.sort(key=lambda x: x[6])
     rows.reverse()
-    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -49,12 +47,12 @@ def restaurants_by_score ():
         print("type = ", row[4])
         print("min_order = ", row[5])
         print("score = ", row[6], '\n')
+    return rows
 
 
 def search_food (by, str):
     cur.execute("select * from cusfood where " + by + " = '" + str + "';")
     rows = cur.fetchall()
-    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -64,6 +62,7 @@ def search_food (by, str):
         print("price = ", row[5])
         print("restaurant_id = ", row[6])
         print("score = ", row[7], '\n')
+    return rows
 
 def foods_by_score ():
     cur.execute("select * from food;")
@@ -71,7 +70,6 @@ def foods_by_score ():
 
     rows.sort(key=lambda x: x[7])
     rows.reverse()
-    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -81,6 +79,7 @@ def foods_by_score ():
         print("price = ", row[5])
         print("restaurant_id = ", row[6])
         print("score = ", row[7], '\n')
+    return rows
 
 
 def order_food (customer_id, restaurant_id, food_id):
