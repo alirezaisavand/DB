@@ -167,9 +167,32 @@ def rate_food(order_id, food_id, score):
 
 
 def get_customer_basket(customer_id):
-    cur.execute("select cusfood.name, basket.amount from basket inner join cusfood ON(basket.food_id=cusfood.id) where customer_id = '"
-                + customer_id + "';")
+    cur.execute(
+        "select cusfood.name, basket.amount from basket inner join cusfood ON(basket.food_id=cusfood.id) where customer_id = '"
+        + customer_id + "';")
     return cur.fetchall()
+
+
+def add_delivery_score(order_id, score):
+    cur.execute("update cussending set score=" + str(
+        score) + " where order_id='" + order_id + "';")
+    con.commit()
+
+
+def get_order_data(order_id):
+    cur.execute("select * from cusorder where id = '"
+                + order_id + "';")
+    return cur.fetchall()
+
+
+def get_sending_data(order_id):
+    cur.execute("select * from cussending where order_id = '"
+                + order_id + "';")
+    rows=cur.fetchall()
+    if len(rows)==0:
+        return [["?"]*10]
+    else:
+        return rows
 
 
 def get_customer_orders(customer_id):
@@ -207,7 +230,9 @@ def find_food_id(order_id, food_name):
     cur.execute("select food_id from cusfoodordered INNER JOIN CUSfood ON(cusfoodordered.food_id=cusfood.id) "
                 "where cusfoodordered.order_id='" + order_id + "' and cusfood.name='" + food_name + "';")
     return cur.fetchall()[0][0]
-#cur.execute('''CREATE VIEW CusfoodOrdered AS SELECT order_id,food_id,score,amount FROM food_ordered''')
+
+
+# cur.execute('''CREATE VIEW CusfoodOrdered AS SELECT order_id,food_id,score,amount FROM food_ordered''')
 
 def add_score(order_id, food_id, score):
     cur.execute("update cusfoodordered set score=" + str(
@@ -236,8 +261,6 @@ def buy_basket_foods(client_id, discount_id=None):  # return order_id
     balance -= total_price
     cur.execute("update customer set balance = " + str(balance)
                 + " where id = '" + client_id + "';")
-
-
 
     order_id = Id_handler.get_new_id()
     if discount_id is None:

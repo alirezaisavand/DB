@@ -23,7 +23,7 @@ def food_rows_to_list_in_order(rows):
     l = []
     for row in rows:
         l.append("name: " + row[0] + "-type: " + row[1] + "-price:" + str(row[2]) +
-                 "-amount:" + str(row[3])+ "\n-your score:"+str(row[4]))
+                 "-amount:" + str(row[3]) + "\n-your score:" + str(row[4]))
     return l
 
 
@@ -127,11 +127,25 @@ def order_food(user_data, user_token):
         return
 
 
+# cur.execute('''CREATE VIEW Cusorder AS SELECT id,restaurant_id,preparing_time,customer_id,order_time,discount_id, total_price FROM orderr ''')
+# cur.execute('''CREATE VIEW Cussending AS SELECT order_id,delivery_id,score,arriving_time,cost FROM sending''')
 def order_detail(order_id, user_token):
     while True:
+        order_data = client_query_handler.get_order_data(order_id)[0]
+        sending_data = client_query_handler.get_sending_data(order_id)[0]
         rows = client_query_handler.get_foods_of_order(order_id)
+
         l = food_rows_to_list_in_order(rows)
-        layout = [[sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+        layout = [[sg.Text("id:" + ("?" if order_data[0] is None else order_data[0]) +
+                           "  preparing time:" + ("?" if order_data[2] is None else order_data[2]))],
+                  [sg.Text("total price:" + ("?" if order_data[5] is None else order_data[5])
+                           + "  ordering time:" + str("?" if order_data[4] is None else order_data[4]))],
+                  [sg.Text("delivery id" + ("?" if sending_data[1] is None else sending_data[1]) +
+                           "  arriving time:" + ("?" if sending_data[3] is None else sending_data[3]))],
+                  [sg.Text("your score to delivery is :" + str(("?" if sending_data[2] is None else sending_data[2]))
+                           + " chenge it here:")
+                      , sg.InputText(), sg.Button("set")],
+                  [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
                   [sg.Text("your score to that food:"), sg.InputText()],
                   [sg.Button("home page")]]
 
@@ -142,12 +156,14 @@ def order_detail(order_id, user_token):
         elif event == "home page":
             window.close()
             home_page(user_token)
+        elif event == "set":
+            window.close()
+            client_query_handler.add_delivery_score(sending_data[0], int(values[0]))
         elif event == "-LIST-":
             food_name = values["-LIST-"][0].split()[1]
-            food_id=client_query_handler.find_food_id(order_id,food_name)
-            client_query_handler.add_score(order_id,food_id,int(values[0]))
+            food_id = client_query_handler.find_food_id(order_id, food_name)
+            client_query_handler.add_score(order_id, food_id, int(values[1]))
         window.close()
-
 
 
 def my_order(user_token):
