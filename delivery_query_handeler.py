@@ -42,33 +42,11 @@ def add_new_delivery(name, salary, area):
     con.commit()
 
 def get_delivery_basket(delivery_id):
-    cur.execute("select * from Ressending where deliveryId=" + delivery_id + ";")
+    cur.execute("select * from Ressending where delivery_id='" + delivery_id + "';")
     rows = cur.fetchall()
 
     for row in rows:
         print("order_id = ", row[0])
     con.commit()
-
-
-#name = input()
-#salary = input()
-#area = input()
-
-#add_new_delivery(name, salary, area)
-
-#cur.execute("select * from delivery;")
-#rows = cur.fetchall()
-
-#for row in rows:
-#    print("id = ", row[0])
-#    print("name = ", row[1])
-#    print("salary = ", row[2])
-#    print("area = ", row[3])
-#    print("busy = ", row[4])
-
-#print("done!")
-#def set_delivery_for_order(order_id, delivery_id):
-#    cur.execute(
-#        '''INSERT INTO Ressending(orderId,deliveryId) VALUES(''' + str(order_id) + "," + str(delivery_id) + ")")
 
 con.commit()
