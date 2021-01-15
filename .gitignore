@@ -22,7 +22,6 @@ config_file.JSON
 *.rar
 *.tar
 *.zip
-*.JSON
 # Logs and databases #
 ######################
 *.log
