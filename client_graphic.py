@@ -18,10 +18,23 @@ def food_rows_to_list(rows):
             row[5]) + "-score:" + str(row[7]))
     return l
 
+def food_rows_to_list_in_order(rows):
+    l = []
+    for row in rows:
+        l.append("name: " + row[0] + "-type: " + row[1] + "-price:" + str(row[2]) + "-amount:" + str(row[3]))
+    return l
+
 def basket_food_rows_to_list(rows):
     l = []
     for row in rows:
         l.append("name: " + row[0] + "-amount: " + str(row[1]))
+    return l
+
+def order_rows_to_list(rows):
+    l=[]
+    #ans.append([order_id,restaurant_name,order_time,total_price])
+    for row in rows:
+        l.append("code: "+row[0]+"\nrestaurant: " + row[1] + "-time: " + str(row[2])+"-price:"+str(row[3]))
     return l
 
 def after_set_restaurant(user_data, user_token, restaurant_name):
@@ -74,8 +87,11 @@ def my_basket(user_token,user_data):
             window.close()
             home_page(user_token)
         elif event == "buy!":
-            print("client.buy")
-          #  client_query_handler.b
+            order_id = client_query_handler.buy_basket_foods(user_token)
+            layout2 = [
+                [sg.Text('DONE your odere id is: ' + order_id)],
+                ]
+            window2 = sg.Window("client app odere id", layout2)
             window.close()
             home_page(user_token)
 
@@ -104,10 +120,32 @@ def order_food(user_data, user_token):
         window.close()
         home_page(user_token)
         return
+def order_detail(order_id,user_token):
+    foods=client_query_handler.get_foods_of_order(order_id)
+    print(foods)
+
 
 def my_order(user_token):
-    rows=client_query_handler.get_customer_orders()
-    print("NOT ComPLiTED:(")
+    rows=client_query_handler.get_customer_orders(user_token)
+    l = order_rows_to_list(rows)
+    print(l)
+    layout = [
+        [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+        [sg.Button("home page")]]
+    window = sg.Window("client app", layout)
+    while True:
+        event, values = window.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        elif event == "home page":
+            window.close()
+            home_page(user_token)
+        elif event == "-LIST-":
+            order_id=values["-LIST-"][0].split()[1]
+            #  client_query_handler.b
+            window.close()
+            order_detail(order_id,user_token)
+
 
 def home_page(user_token):
     print("welcome")

@@ -187,38 +187,52 @@ def get_customer_basket(customer_id):
 
 def get_customer_orders(customer_id):
     cur.execute(
-        "select restaurant_id, preparing_time, order_time, discount_id, total_price, order_id from Cusorder where customer_id = "
+        "select cusorder.id,cusrestaurant.name,cusorder.order_time,cusorder.total_price from Cusorder INNER join cusrestaurant on (cusorder.restaurant_id=cusrestaurant.id) where customer_id = "
         + id_to_str(customer_id) + " order by order_time;")
     orders_rows = cur.fetchall()
-    for row in orders_rows:
-        restaurant_id = row[0]
-        cur.execute("select name from Cusrestaurant where id = " + id_to_str(restaurant_id) + ";")
-        rows = cur.fetchall()
-        if len(rows) == 0:
-            print("Error")
-            return
-        restaurant_name = rows[0][0]
-        preparing_time = row[1]
-        order_time = row[2]
-        discount_id = row[3]
-        total_price = row[4]
-        order_id = row[5]
-        cur.execute("select arriving_time from Cussending where order_id = " + id_to_str(order_id) + ";")
-        rows = cur.fetchall()
-        arriving_time = rows[0][0]
+    return orders_rows
 
-        print("restaurant: " + restaurant_name + " preparing time: " + preparing_time +
-              " order time: " + order_time + " arriving time: " + arriving_time + " discount id: " + discount_id +
-              " total price: " + total_price)
-        cur.execute("select food_id from CusfoodOrdered where order_id = " + id_to_str(order_id) + ";")
-        rows = cur.fetchall()
-        for row in rows:
-            food_id = row[0]
-            cur.execute("select name from Cusfood where id = " + id_to_str(food_id) + ";")
-            food_rows = cur.fetchall()
-            food_name = food_rows[0][0]
-            print("food name: " + food_name)
-    con.commit()
+
+#  ans=[]
+#  for row in orders_rows:
+#     restaurant_id = row[0]
+#     cur.execute("select name from Cusrestaurant where id = " + id_to_str(restaurant_id) + ";")
+#     rows = cur.fetchall()
+#     if len(rows) == 0:
+#         print("Error")
+#         return
+#     restaurant_name = rows[0][0]
+#     preparing_time = row[1]
+#     discount_id = row[3]
+#     total_price = row[4]
+#     order_time = row[5]
+#     cur.execute("select arriving_time from Cussending where order_id = " + id_to_str(order_id) + ";")
+#     rows = cur.fetchall()
+#     arriving_time = rows[0][0]
+
+#    print("restaurant: " + restaurant_name + " preparing time: " + preparing_time +
+#          " order time: " + order_time + " arriving time: " + arriving_time + " discount id: " + discount_id +
+#          " total price: " + total_price)
+#    ans.append([order_id,restaurant_name,order_time,total_price])
+# return ans
+
+def buy_basket_foods(client_id):#return order_id
+    print(":(")
+
+
+def get_foods_of_order(order_id):
+    cur.execute("select Cusfood.name,Cusfood.type,Cusfood.Price,CusfoodOrdered.amount "
+                "from CusfoodOrdered INNER JOIN Cusfood ON(cusfoodOrdered.foodId=cusfood.id) where order_id = " + id_to_str(order_id) + ";")
+    rows = cur.fetchall()
+    return rows
+
+    # for row in rows:
+    #    food_id = row[0]
+    #    cur.execute("select name from Cusfood where id = " + id_to_str(food_id) + ";")
+    #    food_rows = cur.fetchall()
+    #    food_name = food_rows[0][0]
+    #    print("food name: " + food_name)
+    # con.commit()
 
 
 def receive_order(order_id):
