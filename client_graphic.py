@@ -18,11 +18,14 @@ def food_rows_to_list(rows):
             row[5]) + "-score:" + str(row[7]))
     return l
 
+
 def food_rows_to_list_in_order(rows):
     l = []
     for row in rows:
-        l.append("name: " + row[0] + "-type: " + row[1] + "-price:" + str(row[2]) + "-amount:" + str(row[3]))
+        l.append("name: " + row[0] + "-type: " + row[1] + "-price:" + str(row[2]) +
+                 "-amount:" + str(row[3])+ "\n-your score:"+str(row[4]))
     return l
+
 
 def basket_food_rows_to_list(rows):
     l = []
@@ -30,12 +33,13 @@ def basket_food_rows_to_list(rows):
         l.append("name: " + row[0] + "-amount: " + str(row[1]))
     return l
 
+
 def order_rows_to_list(rows):
-    l=[]
-    #ans.append([order_id,restaurant_name,order_time,total_price])
+    l = []
     for row in rows:
-        l.append("code: "+row[0]+"\nrestaurant: " + row[1] + "-time: " + str(row[2])+"-price:"+str(row[3]))
+        l.append("code: " + row[0] + "\nrestaurant: " + row[1] + "-time: " + str(row[2]) + "-price:" + str(row[3]))
     return l
+
 
 def after_set_restaurant(user_data, user_token, restaurant_name):
     restaurant_id = client_query_handler.searchـrestaurant("name", restaurant_name)[0][0]
@@ -47,7 +51,7 @@ def after_set_restaurant(user_data, user_token, restaurant_name):
         [sg.Text('balance:' + str(user_data[4]))],
         [sg.Text(str(restaurant_name))],
         [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
-        [sg.Button("Done!"),sg.Button("home page")]]
+        [sg.Button("Done!"), sg.Button("home page")]]
 
     window = sg.Window("client app", layout)
     while True:
@@ -63,20 +67,21 @@ def after_set_restaurant(user_data, user_token, restaurant_name):
             # after enabling multisearch filter add restorant_id
             food_id = client_query_handler.search_food("name", food_name)[0][0]
             client_query_handler.order_food(user_token, restaurant_id, food_id)
-            after_set_restaurant(user_data,user_token,restaurant_name)
+            after_set_restaurant(user_data, user_token, restaurant_name)
+
         elif event == "Done!":
             window.close()
             home_page(user_token)
 
 
-def my_basket(user_token,user_data):
-    rows=client_query_handler.get_customer_basket(user_token)
+def my_basket(user_token, user_data):
+    rows = client_query_handler.get_customer_basket(user_token)
     l = basket_food_rows_to_list(rows)
     print(l)
     layout = [
         [sg.Text('balance:' + str(user_data[4]))],
         [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
-        [sg.Button("buy!"),sg.Button("home page")]]
+        [sg.Button("buy!"), sg.Button("home page")]]
 
     window = sg.Window("client app", layout)
     while True:
@@ -90,7 +95,7 @@ def my_basket(user_token,user_data):
             order_id = client_query_handler.buy_basket_foods(user_token)
             layout2 = [
                 [sg.Text('DONE your odere id is: ' + order_id)],
-                ]
+            ]
             window2 = sg.Window("client app odere id", layout2)
             window.close()
             home_page(user_token)
@@ -120,13 +125,33 @@ def order_food(user_data, user_token):
         window.close()
         home_page(user_token)
         return
-def order_detail(order_id,user_token):
-    foods=client_query_handler.get_foods_of_order(order_id)
-    print(foods)
+
+
+def order_detail(order_id, user_token):
+    while True:
+        rows = client_query_handler.get_foods_of_order(order_id)
+        l = food_rows_to_list_in_order(rows)
+        layout = [[sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+                  [sg.Text("your score to that food:"), sg.InputText()],
+                  [sg.Button("home page")]]
+
+        window = sg.Window("client app", layout)
+        event, values = window.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        elif event == "home page":
+            window.close()
+            home_page(user_token)
+        elif event == "-LIST-":
+            food_name = values["-LIST-"][0].split()[1]
+            food_id=client_query_handler.find_food_id(order_id,food_name)
+            client_query_handler.add_score(order_id,food_id,int(values[0]))
+        window.close()
+
 
 
 def my_order(user_token):
-    rows=client_query_handler.get_customer_orders(user_token)
+    rows = client_query_handler.get_customer_orders(user_token)
     l = order_rows_to_list(rows)
     print(l)
     layout = [
@@ -141,10 +166,10 @@ def my_order(user_token):
             window.close()
             home_page(user_token)
         elif event == "-LIST-":
-            order_id=values["-LIST-"][0].split()[1]
+            order_id = values["-LIST-"][0].split()[1]
             #  client_query_handler.b
             window.close()
-            order_detail(order_id,user_token)
+            order_detail(order_id, user_token)
 
 
 def home_page(user_token):
@@ -154,7 +179,7 @@ def home_page(user_token):
     layout = [
         [sg.Text('balance:' + str(user_data[4]))],
         [sg.Text('charge account'), sg.InputText(), sg.Button("charge")],
-        [sg.Button("order food"),sg.Button("buy basket"),sg.Button("my orders")]]
+        [sg.Button("order food"), sg.Button("buy basket"), sg.Button("my orders")]]
     window = sg.Window("client app", layout)
     while True:
         event, values = window.read()
@@ -172,7 +197,7 @@ def home_page(user_token):
             my_order(user_token)
         elif event == "buy basket":
             window.close()
-            my_basket(user_token,user_data)
+            my_basket(user_token, user_data)
         window.close()
         home_page(user_token)
         return

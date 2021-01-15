@@ -216,13 +216,53 @@ def get_customer_orders(customer_id):
 #    ans.append([order_id,restaurant_name,order_time,total_price])
 # return ans
 
-def buy_basket_foods(client_id):#return order_id
-    print(":(")
+def find_food_id(order_id, food_name):
+    cur.execute("select food_id from cusfoodordered INNER JOIN CUSfood ON(cusfoodordered.food_id=cusfood.id) "
+                "where cusfoodordered.order_id='" + order_id + "' and cusfood.name='" + food_name + "';")
+    return cur.fetchall()[0][0]
+#cur.execute('''CREATE VIEW CusfoodOrdered AS SELECT order_id,food_id,score,amount FROM food_ordered''')
+
+def add_score(order_id, food_id, score):
+    cur.execute("update cusfoodordered set score=" + str(
+        score) + " where order_id='" + order_id + "' and food_id='" + food_id + "';")
+    con.commit()
+
+
+def buy_basket_foods(client_id, discount_id=None):  # return order_id
+    rows = get_customer_basket(client_id)
+    if len(rows) == 0:
+        print("BUY SOMETHING FIRST")
+        return "-1"
+    first_food_id = rows[0][0]
+    cur.execute("select restaurant_id from cusfood where id='" + first_food_id + "';")
+    restaurant_id = cur.fetchall()[0][0]
+
+    cur.execute("select SUM(cusfood.price*basket.amount) FROM cusfood inner join basket ON(cusfood.id=basket.food_id)"
+                "where basket.customer_id='" + client_id + "';")
+    total_price = cur.fetchall()[0][0]
+
+    order_id = Id_handler.get_new_id()
+    if discount_id is None:
+        cur.execute("insert into cusorder (id,restaurant_id,customer_id,order_time,total_price)"
+                    " values('" + order_id + "','" + restaurant_id + "','" + client_id + "',current_timestamp,"
+                    + str(total_price) + ");")
+    else:
+        cur.execute("insert into cusorder (id,restaurant_id,customer_id,order_time,discount_id,total_price)"
+                    " values('" + order_id + "','" + restaurant_id + "','" + client_id + "',current_timestamp,'"
+                    + discount_id + "'," + str(total_price) + ";")
+        # bargardonim
+    cur.execute("insert into CusfoodOrdered (order_id,food_id,amount) select "
+                "'" + order_id + "',food_id,amount from basket where customer_id='" + client_id + "';")
+
+    cur.execute("DELETE from basket where customer_id='" + client_id + "';")
+    con.commit()
+    return order_id
 
 
 def get_foods_of_order(order_id):
-    cur.execute("select Cusfood.name,Cusfood.type,Cusfood.Price,CusfoodOrdered.amount "
-                "from CusfoodOrdered INNER JOIN Cusfood ON(cusfoodOrdered.foodId=cusfood.id) where order_id = " + id_to_str(order_id) + ";")
+    cur.execute("select Cusfood.name,Cusfood.type,Cusfood.Price,CusfoodOrdered.amount,CusfoodOrdered.score "
+                "from CusfoodOrdered INNER JOIN Cusfood ON(cusfoodOrdered.food_Id=cusfood.id) where order_id = '" +
+                order_id + "';")
     rows = cur.fetchall()
     return rows
 

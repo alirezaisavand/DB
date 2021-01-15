@@ -23,7 +23,7 @@ cur.execute('''CREATE VIEW Cusbasket AS SELECT customer_id,food_id,amount FROM b
 cur.execute('''CREATE VIEW Cusorder AS SELECT id,restaurant_id,preparing_time,customer_id,order_time,discount_id, 
 total_price FROM orderr ''')
 cur.execute('''CREATE VIEW Cussending AS SELECT order_id,delivery_id,score,arriving_time,cost FROM sending''')
-cur.execute('''CREATE VIEW CusfoodOrdered AS SELECT order_id,food_id,score FROM food_ordered''')
+cur.execute('''CREATE VIEW CusfoodOrdered AS SELECT order_id,food_id,score,amount FROM food_ordered''')
 cur.execute('''CREATE VIEW Cusfood AS SELECT id,name,type,amount,description,price,restaurant_id,score FROM food
 ''')
 

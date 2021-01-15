@@ -62,7 +62,7 @@ cur.execute('''create table orderr
         (id character('''+token_length+''') primary key not null,
         restaurant_id character('''+token_length+''') not null,
         customer_id character('''+token_length+''') not null,
-        discount_id character('''+token_length+''') not null,
+        discount_id character('''+token_length+''') ,
         preparing_time timestamp,
         order_time timestamp,
         total_price integer,
@@ -73,7 +73,7 @@ cur.execute('''create table orderr
 cur.execute('''create table sending
         (order_id character('''+token_length+''') not null,
         delivery_id character('''+token_length+''') not null,
-        score integer,
+        score integer DEFAULT 0,
         arriving_time timestamp,
         cost integer,
         primary key (order_id, delivery_id),
@@ -83,7 +83,8 @@ cur.execute('''create table sending
 cur.execute('''create table food_ordered
         (order_id character('''+token_length+''') not null,
         food_id character('''+token_length+'''),
-        score integer,
+        amount integer,
+        score integer DEFAULT 0,
         primary key (order_id, food_id),
         foreign key (order_id) references orderr(id),
         foreign key (food_id) references food(id));''')
