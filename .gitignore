@@ -1,3 +1,7 @@
+
+*.xml
+*.iml
+
 #config_file.JSON
 config_file.JSON
 
