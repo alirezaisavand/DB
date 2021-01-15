@@ -156,7 +156,7 @@ def rate_food(order_id, food_id, score):
 
 def get_customer_orders(customer_id):
     cur.execute("select restaurant_id, preparing_time, order_time, discount_id, total_price, order_id from Cusorder where customer_id = "
-                + id_to_str(customer_id) + ";")
+                + id_to_str(customer_id) + " order by order_time;")
     orders_rows = cur.fetchall()
     for row in orders_rows:
         restaurant_id = row[0]

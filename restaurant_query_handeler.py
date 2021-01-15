@@ -42,8 +42,8 @@ def add_new_restaurant(name, phone_number, area, type, min_order):
         "," + name + "," + str(phone_number) + " " + area + "," + type + "," + str(min_order) + ",0)")
 
 #new queries
-def get_restaurant_orders(restaurant_id):
-    cur.execute("select * from Resorder where restaurant_id = " + id_to_str(restaurant_id) + ";")
+def get_restaurant_orders(restaurant_id, filter_arrived):
+    cur.execute("select * from Resorder where restaurant_id = " + id_to_str(restaurant_id) + " order by order_time;")
     orders_rows = cur.fetchall()
     for row in orders_rows:
         customer_id = row[3]
@@ -58,8 +58,13 @@ def get_restaurant_orders(restaurant_id):
         total_price = row[5]
         order_id = row[0]
         cur.execute("select arriving_time from Ressending where order_id = " + id_to_str(order_id) + ";")
-        rows = cur.fetchall()
-        arriving_time = rows[0][0]
+        arriving_time = cur.fetchall()[0][0]
+
+        if filter_arrived:
+            cur.execute("select order_id from Ressending where order_id = " + id_to_str(order_id) + " and arriving_time is null;")
+            if len(cur.fetchall()) == 0:
+                continue
+
 
         print("customer name: " + customer_name + " preparing time: " + preparing_time +
               " order time: " + order_time + " arriving time: " + arriving_time +
