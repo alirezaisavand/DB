@@ -7,4 +7,4 @@ def get_new_id():
 
 f = open('config_file.JSON')
 data = json.load(f)
-token_length = data["postgresql"]["token_length"]
+token_length = int(data["postgresql"]["token_length"])

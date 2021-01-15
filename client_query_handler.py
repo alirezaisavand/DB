@@ -13,10 +13,18 @@ def id_to_str(id):
     str_id = "\'" + id + "\'"
     return str_id
 
-def searchـrestaurant (by, str):
-    cur.execute("select * from restaurant where " + by + " = '" + str + "';")
+def get_client_info(id):
+    cur.execute("select * from cuscustomer where id = '" + id + "';")
     rows = cur.fetchall()
+    con.commit()
+    for row in rows:
+        return row
+    return None
 
+def searchـrestaurant (by, str):
+    cur.execute("select * from cusrestaurant where " + by + " = '" + str + "';")
+    rows = cur.fetchall()
+    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -27,12 +35,12 @@ def searchـrestaurant (by, str):
         print("score = ", row[6], '\n')
 
 def restaurants_by_score ():
-    cur.execute("select * from restaurant;")
+    cur.execute("select * from cusrestaurant;")
     rows = cur.fetchall()
 
     rows.sort(key=lambda x: x[6])
     rows.reverse()
-
+    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -44,9 +52,9 @@ def restaurants_by_score ():
 
 
 def search_food (by, str):
-    cur.execute("select * from food where " + by + " = '" + str + "';")
+    cur.execute("select * from cusfood where " + by + " = '" + str + "';")
     rows = cur.fetchall()
-
+    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -63,7 +71,7 @@ def foods_by_score ():
 
     rows.sort(key=lambda x: x[7])
     rows.reverse()
-
+    con.commit()
     for row in rows:
         print("id = ", row[0])
         print("name = ", row[1])
@@ -117,8 +125,10 @@ def order_food (customer_id, restaurant_id, food_id):
                         + "' and food_id = '" + food_id + "';")
 
         print("food ordered!")
+    con.commit()
 
 def add_customer (username, password, name, area, phoner_number):
+    print("NEW CUSTOMER")
     cur.execute("select * from customer where id = '" + username + "';")
     rows = cur.fetchall()
     id=Id_handler.get_new_id()
@@ -127,13 +137,17 @@ def add_customer (username, password, name, area, phoner_number):
                     + area + "', '" + phoner_number + "', " + str(0)
                     + ");")
         cur.execute("insert into user_pass values('" + id + "', '" + password + "' , '"+username+"');")
+        con.commit()
+        return 1
     else:
         print("This user currently exists!")
+        con.commit()
+        return 0
 
 def check_user_pass(username, password):
     cur.execute("select customer_id from user_pass where username='" +username + "' and  password = '" + password + "';")
     rows = cur.fetchall()
-
+    con.commit()
     if len(rows)==0:
         return -1
     return rows[0][0]
@@ -147,12 +161,14 @@ def charge_account(customer_id, amount):
     balance = rows[0][4] + amount
     cur.execute("update Cuscustomer set balance = " + str(balance) +
                 " where id = " + id_to_str(customer_id) + ";")
+    con.commit()
     print("account charged successfully")
 
 
 def rate_food(order_id, food_id, score):
     cur.execute("update CusfoodOrdered set score = " + str(score) +
                 " where order_id = " + id_to_str(order_id) + " and food_id = " + id_to_str(food_id) + ';')
+    con.commit()
 
 def get_customer_orders(customer_id):
     cur.execute("select restaurant_id, preparing_time, order_time, discount_id, total_price, order_id from Cusorder where customer_id = "
@@ -187,6 +203,7 @@ def get_customer_orders(customer_id):
             food_rows = cur.fetchall()
             food_name = food_rows[0][0]
             print("food name: " + food_name)
+    con.commit()
 
 def receive_order(order_id):
     cur.execute("select * from Cussending where order_id = " + id_to_str(order_id) + ";")
@@ -197,5 +214,6 @@ def receive_order(order_id):
     delivery_id = rows[0][1]
     cur.execute("update Cusdelivery set busy = false where id = " + id_to_str(delivery_id) + ";")
     cur.execute("update Cussending set arriving_time = CURRENT_TIMESTAMP where order_id = " + id_to_str(order_id) + ";")
+    con.commit()
 
 con.commit()
