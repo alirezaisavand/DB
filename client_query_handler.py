@@ -88,30 +88,17 @@ def foods_by_score():
 
 
 def order_food(customer_id, restaurant_id, food_id):
-    cur.execute("select * from customer where id = '" + customer_id + "';")
-    rows = cur.fetchall()
-    balance = rows[0][4]
-
     cur.execute("select * from food where id = '" + food_id +
                 "' and restaurant_id = '" + restaurant_id + "';")
-
     rows = cur.fetchall()
 
-    price = rows[0][5]
     amount = rows[0][3]
-
-    if balance < price:
-        print("Customer doesn't have enough money!")
-    elif amount == 0:
+    if amount == 0:
         print("This food is not available!")
     else:
         amount -= 1
         cur.execute("update food set amount = " + str(amount) + " where id = '"
                     + food_id + "' and restaurant_id = '" + restaurant_id + "';")
-
-        balance -= price
-        cur.execute("update customer set balance = " + str(balance)
-                    + " where id = '" + customer_id + "';")
 
         cur.execute("select * from basket where customer_id = '" + customer_id
                     + "' and food_id = '" + food_id + "';")
@@ -180,8 +167,8 @@ def rate_food(order_id, food_id, score):
 
 
 def get_customer_basket(customer_id):
-    cur.execute("select food_id, amount from basket where customer_id = "
-                + id_to_str(customer_id) + ";")
+    cur.execute("select cusfood.name, basket.amount from basket inner join cusfood ON(basket.food_id=cusfood.id) where customer_id = '"
+                + customer_id + "';")
     return cur.fetchall()
 
 
@@ -240,6 +227,17 @@ def buy_basket_foods(client_id, discount_id=None):  # return order_id
     cur.execute("select SUM(cusfood.price*basket.amount) FROM cusfood inner join basket ON(cusfood.id=basket.food_id)"
                 "where basket.customer_id='" + client_id + "';")
     total_price = cur.fetchall()[0][0]
+
+    cur.execute("select * from customer where id = '" + client_id + "';")
+    rows = cur.fetchall()
+    balance = rows[0][4]
+    if balance < total_price:
+        print("Customer doesn't have enough money!")
+    balance -= total_price
+    cur.execute("update customer set balance = " + str(balance)
+                + " where id = '" + client_id + "';")
+
+
 
     order_id = Id_handler.get_new_id()
     if discount_id is None:
