@@ -17,7 +17,7 @@ cur = con.cursor()
 
 cur.execute('''CREATE VIEW Cusrestaurant AS SELECT id,name,phone_number,area,type,min_order,score FROM restaurant ''')
 cur.execute('''CREATE VIEW Cusdelivery AS SELECT id,name, busy FROM delivery''')
-cur.execute('''CREATE VIEW CusdiscountCode AS SELECT id,percentage,max,customer_id FROM discountCode ''')
+cur.execute('''CREATE VIEW CusdiscountCode AS SELECT id,percentage,max,customer_id,used FROM discountCode ''')
 cur.execute('''CREATE VIEW Cuscustomer AS SELECT id,name,area,phone_number,balance FROM customer ''')
 cur.execute('''CREATE VIEW Cusbasket AS SELECT customer_id,food_id,amount FROM basket''')
 cur.execute('''CREATE VIEW Cusorder AS SELECT id,restaurant_id,preparing_time,customer_id,order_time,discount_id, 
