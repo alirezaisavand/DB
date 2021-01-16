@@ -3,11 +3,11 @@ import delivery_query_handeler
 import client_query_handler
 
 # add five restaurant
-b1 = restaurant_query_handeler.add_new_restaurant("A1", "12536985", "2", "fast food", 20)
-b2 = restaurant_query_handeler.add_new_restaurant("B2", "22536986", "2", "traditional", 30)
-b3 = restaurant_query_handeler.add_new_restaurant("C3", "32536987", "3", "fast food", 40)
-b4 = restaurant_query_handeler.add_new_restaurant("D4", "42536988", "3", "traditional", 50)
-b5 = restaurant_query_handeler.add_new_restaurant("E5", "52536989", "4", "fast food", 60)
+b1 = restaurant_query_handeler.add_restaurant("A1", "12536985", "Meikhosh1", "2", "1111", "fast food", 20)
+b2 = restaurant_query_handeler.add_restaurant("B2", "22536986", "Meikhosh2", "2", "2222", "traditional", 30)
+b3 = restaurant_query_handeler.add_restaurant("C3", "32536987", "Meikhosh3", "3", "3333", "fast food", 40)
+b4 = restaurant_query_handeler.add_restaurant("D4", "42536988", "Meikhosh4", "3", "4444", "traditional", 50)
+b5 = restaurant_query_handeler.add_restaurant("E5", "52536989", "Meikhosh5", "4", "5555", "fast food", 60)
 # add 3 food to each
 restaurant_query_handeler.add_food_to_restaurant(b2, "Ash", "dessert", "in ye ghazaye alist", 10)
 restaurant_query_handeler.add_food_to_restaurant(b2, "Kabab", "main", "in ye ghazaye alist", 12)
@@ -39,5 +39,6 @@ delivery_query_handeler.add_new_delivery("arshia", 90, "4")
 
 #add test customer
 client_query_handler.add_customer("test","test","arshia","2","9128381385")
+
 
 print("initial data added to the data base")

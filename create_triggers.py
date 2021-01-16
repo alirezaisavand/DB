@@ -13,7 +13,7 @@ cur = con.cursor()
 #check kon ino
 cur.execute('''create trigger food_score_handler 
             after update of score on foodOrdered
-            referencing new as n1 
+            referencing new as n1 old as o1 
             for each row
             when (n1.score is not null)
             begin
@@ -24,7 +24,7 @@ cur.execute('''create trigger food_score_handler
             end''')
 cur.execute('''create trigger retaurant_score_handler
             after update of score on food
-            referencing new as n1
+            referencing new as n1 old as o1
             for each row
             begin
             update restaurant set score = (
