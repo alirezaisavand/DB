@@ -51,7 +51,7 @@ def after_set_restaurant(user_data, user_token, restaurant_name):
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text(str(restaurant_name))],
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
             [sg.Button("Done!"), sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
@@ -84,7 +84,7 @@ def my_basket(user_token, user_data):
         print(l)
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
             [sg.Button("buy!"), sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
@@ -115,7 +115,7 @@ def order_food(user_data, user_token):
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text('restaurant in your area')],
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
             [sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
@@ -154,7 +154,7 @@ def order_detail(order_id, user_token):
                   [sg.Text("your score to delivery is :" + str(("?" if sending_data[2] is None else sending_data[2]))
                            + " chenge it here:")
                       , sg.InputText(), sg.Button("set")],
-                  [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+                  [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
                   [sg.Text("your score to that food:"), sg.InputText()],
                   [sg.Button("home page"), sg.Button("<-back")]]
 
@@ -184,7 +184,7 @@ def my_order(user_token):
         l = order_rows_to_list(rows)
         print(l)
         layout = [
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
             [sg.Button("home page"), sg.Button("<-back")]]
         window = sg.Window("client app", layout)
         event, values = window.read()

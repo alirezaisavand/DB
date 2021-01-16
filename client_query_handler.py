@@ -171,7 +171,7 @@ def rate_food(order_id, food_id, score):
 
 def get_customer_basket(customer_id):
     cur.execute(
-        "select cusfood.name, basket.amount from basket inner join cusfood ON(basket.food_id=cusfood.id) where customer_id = '"
+        "select cusfood.name, basket.amount, cusfood.id from basket inner join cusfood ON(basket.food_id=cusfood.id) where customer_id = '"
         + customer_id + "';")
     return cur.fetchall()
 
@@ -248,7 +248,8 @@ def buy_basket_foods(client_id, discount_id=None):  # return order_id
     if len(rows) == 0:
         print("BUY SOMETHING FIRST")
         return "-1"
-    first_food_id = rows[0][0]
+    first_food_id = rows[0][2]
+
     cur.execute("select restaurant_id from cusfood where id='" + first_food_id + "';")
     restaurant_id = cur.fetchall()[0][0]
 
