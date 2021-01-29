@@ -29,7 +29,7 @@ def get_not_completed_order(restaurant_id):
 
 def add_food_to_restaurant(restaurant_id, food_name, food_type, food_description, food_price):
     food_id = Id_handler.get_new_id()
-    cur.execute("INSERT INTO RESfood VALUES('" + food_id + "','" + food_name + "','" + food_type + "',1,'"
+    cur.execute("INSERT INTO RESfood VALUES('" + food_id + "','" + food_name + "','" + food_type + "',0,'"
                 + food_description + "'," + str(food_price) + ",'" + restaurant_id + "');")
     con.commit()
     return id
@@ -41,10 +41,11 @@ def set_delivery_for_order(order_id, delivery_id):
 
 
 def increase_amount(food_id, amount):
-    cur.execute('''SELECT amount from Resfood WHERE Id=''' + str(food_id) + ")")
+    cur.execute("SELECT amount from Resfood WHERE Id=" + id_to_str(food_id))
     rows = cur.fetchall()
+    print(len(rows))
     amount += rows[0][0]
-    cur.execute('''UPDATE Resfood SET amount=''' + str(amount) + ''' WHERE Id=''' + str(food_id) + ")")
+    cur.execute("UPDATE Resfood SET amount=" + str(amount) + " WHERE Id=" + id_to_str(food_id))
     con.commit()
 
 def is_arrived(order_id):
