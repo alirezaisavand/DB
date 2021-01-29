@@ -54,9 +54,6 @@ def order_rows_to_list(rows):
     return l
 
 
-# restaurant      area, type,score
-# food            type price score
-
 def choose_restaurant_filter():
     by = []
     what = []
@@ -65,8 +62,10 @@ def choose_restaurant_filter():
     while True:
         layout = [
             [sg.Text('minimum score'), sg.InputText(), sg.Button("apply")],
-            [sg.Listbox(values=areas, size=(200, 12), key='-area-', enable_events=True)],
-            [sg.Listbox(values=types, size=(200, 12), key='-type-', enable_events=True)],
+            [sg.Text('choose restaurant area below')],
+            [sg.Listbox(values=areas, size=(200, min(12,len(areas))), key='-area-', enable_events=True)],
+            [sg.Text('choose restaurant type below')],
+            [sg.Listbox(values=types, size=(200, min(12,len(types))), key='-type-', enable_events=True)],
 
             [sg.Button("apply filters"), sg.Button("<-back")]]
 
@@ -103,7 +102,8 @@ def choose_food_filter():
             [sg.Text('minimum score'), sg.InputText(), sg.Button("apply1")],
             [sg.Text('minimum price'), sg.InputText(), sg.Button("apply2")],
             [sg.Text('maximum price'), sg.InputText(), sg.Button("apply3")],
-            [sg.Listbox(values=types, size=(200, 12), key='-type-', enable_events=True)],
+            [sg.Text('choose food type below')],
+            [sg.Listbox(values=types, size=(200, min(12,len(types))), key='-type-', enable_events=True)],
 
             [sg.Button("apply filters"), sg.Button("<-back")]]
 
@@ -152,7 +152,7 @@ def choose_food(user_data, user_token, restaurant_name):
             [sg.Button("more filter!")],
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text(str(restaurant_name))],
-            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, min(12,len(l))), key='-LIST-', enable_events=True)],
             [sg.Button("Done!"), sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
@@ -190,7 +190,7 @@ def my_basket(user_token, user_data):
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text("order price:" + str(client_query_handler.get_basket_price(user_token)))],
-            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, min(12,len(l))), key='-LIST-', enable_events=True)],
             [sg.Button("buy!"), sg.Button("home page"), sg.Button("use discount code"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
@@ -221,7 +221,7 @@ def choose_restaurant(user_data, user_token):
             [sg.Button("more filter!")],
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text(text)],
-            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, min(12,len(l))), key='-LIST-', enable_events=True)],
             [sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
@@ -261,7 +261,7 @@ def order_detail(order_id, user_token):
                   [sg.Text("your score to delivery is :" + str(("?" if sending_data[2] is None else sending_data[2]))
                            + " chenge it here:")
                       , sg.InputText(), sg.Button("set")],
-                  [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+                  [sg.Listbox(values=l, size=(200, min(12,len(l))), key='-LIST-', enable_events=True)],
                   [sg.Text("your score to that food:"), sg.InputText()],
                   [sg.Button("home page"), sg.Button("<-back")]]
 
@@ -288,7 +288,7 @@ def my_orders(user_token):
         l = order_rows_to_list(rows)
         print(l)
         layout = [
-            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, min(12,len(l))), key='-LIST-', enable_events=True)],
             [sg.Button("home page"), sg.Button("<-back")]]
         window = sg.Window("client app", layout)
         event, values = window.read()
@@ -311,7 +311,7 @@ def my_discounts(user_token, total_price=None):
         l = discount_rows_to_list(rows, total_price)
 
         layout = [
-            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, min(12,len(l))), key='-LIST-', enable_events=True)],
             [sg.Button("home page")]]
 
         window = sg.Window("client app", layout)
