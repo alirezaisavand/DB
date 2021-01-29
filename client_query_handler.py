@@ -30,7 +30,15 @@ def get_condition(by, ans):
     for i in range(0, len(by)):
         if i != 0:
             st += " and "
-        st += by[i] + " = '" + ans[i] + "'"
+        if by[i] == "score":
+            st += by[i] + " >= '" + ans[i] + "'"
+        elif by[i] == "price":
+            if ans[i] > 0:
+                st += by[i] + " >= '" + ans[i] + "'"
+            else:
+                st += by[i] + " <= '" + ans[i] + "'"
+        else:
+            st += by[i] + " = '" + ans[i] + "'"
     return st
 
 
@@ -63,6 +71,18 @@ def restaurants_by_score():
         print("type = ", row[4])
         print("min_order = ", row[5])
         print("score = ", row[6], '\n')
+    return rows
+
+
+def get_all_restaurant_specific_colum(str):
+    cur.execute("select distinct " + str + " from cusrestaurant;")
+    rows = cur.fetchall()
+    return rows
+
+
+def get_all_food_specific_colum(str):
+    cur.execute("select distinct " + str + " from cusfood;")
+    rows = cur.fetchall()
     return rows
 
 
@@ -120,9 +140,11 @@ def order_food(customer_id, restaurant_id, food_id):
 
         print("food ordered!")
     con.commit()
-#cur.execute('''CREATE VIEW CusdiscountCode AS SELECT id,percentage,max,customer_id FROM discountCode ''')
-def add_discount_code(client_id,percentage,max):
-    id=Id_handler.get_new_id()
+
+
+# cur.execute('''CREATE VIEW CusdiscountCode AS SELECT id,percentage,max,customer_id FROM discountCode ''')
+def add_discount_code(client_id, percentage, max):
+    id = Id_handler.get_new_id()
     cur.execute("insert into cusdiscountCode values('" + id + "', " + str(percentage) + ", "
                 + str(max) + ", '" + client_id + "' , false ); ")
     con.commit()
@@ -154,6 +176,7 @@ for row in rows:
     print("id = ", row[0])
     print("user = ", row[1])
     print("pass = ", row[2])
+
 
 def check_user_pass(username, password):
     cur.execute(
@@ -304,7 +327,7 @@ def buy_basket_foods(client_id, discount_id=None):  # return order_id
         cur.execute("insert into cusorder (id,restaurant_id,customer_id,order_time,discount_id,total_price)"
                     " values('" + order_id + "','" + restaurant_id + "','" + client_id + "',current_timestamp,'"
                     + discount_id + "'," + str(total_price) + ");")
-        cur.execute("update cusdiscountcode set used = true where id='"+discount_id+"';")
+        cur.execute("update cusdiscountcode set used = true where id='" + discount_id + "';")
         # bargardonim
     cur.execute("insert into CusfoodOrdered (order_id,food_id,amount) select "
                 "'" + order_id + "',food_id,amount from basket where customer_id='" + client_id + "';")
