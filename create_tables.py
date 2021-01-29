@@ -47,9 +47,10 @@ cur.execute('''create table customer
 
 cur.execute('''create table discountCode
         (id character('''+token_length+''') primary key not null,
-        percentage integer,
+        percentage real,
         max integer,
         customer_id character('''+token_length+'''),
+        used boolean,
         foreign key (customer_id) references customer(id));''')
 
 cur.execute('''create table basket

@@ -67,7 +67,7 @@ def restaurants_by_score():
 
 
 def search_food(by, str):
-    cur.execute("select * from cusfood"+get_condition(by,str)+";")
+    cur.execute("select * from cusfood" + get_condition(by, str) + ";")
     rows = cur.fetchall()
     return rows
 
@@ -120,11 +120,18 @@ def order_food(customer_id, restaurant_id, food_id):
 
         print("food ordered!")
     con.commit()
+#cur.execute('''CREATE VIEW CusdiscountCode AS SELECT id,percentage,max,customer_id FROM discountCode ''')
+def add_discount_code(client_id,percentage,max):
+    id=Id_handler.get_new_id()
+    cur.execute("insert into cusdiscountCode values('" + id + "', " + str(percentage) + ", "
+                + str(max) + ", '" + client_id + "' , false ); ")
+    con.commit()
+    return id
 
 
 def add_customer(username, password, name, area, phoner_number):
     print("NEW CUSTOMER")
-    cur.execute("select * from customer where id = '" + username + "';")
+    cur.execute("select * from user_pass where username = '" + username + "';")
     rows = cur.fetchall()
     id = Id_handler.get_new_id()
     if len(rows) == 0:
@@ -133,12 +140,20 @@ def add_customer(username, password, name, area, phoner_number):
                     + ");")
         cur.execute("insert into user_pass values('" + id + "', '" + password + "' , '" + username + "');")
         con.commit()
-        return 1
+        return id
     else:
         print("This user currently exists!")
         con.commit()
         return 0
 
+
+cur.execute("select * from user_pass")
+rows = cur.fetchall()
+
+for row in rows:
+    print("id = ", row[0])
+    print("user = ", row[1])
+    print("pass = ", row[2])
 
 def check_user_pass(username, password):
     cur.execute(
@@ -171,7 +186,7 @@ def rate_food(order_id, food_id, score):
 
 def get_customer_basket(customer_id):
     cur.execute(
-        "select cusfood.name, basket.amount from basket inner join cusfood ON(basket.food_id=cusfood.id) where customer_id = '"
+        "select cusfood.name, basket.amount, cusfood.id from basket inner join cusfood ON(basket.food_id=cusfood.id) where customer_id = '"
         + customer_id + "';")
     return cur.fetchall()
 
@@ -191,9 +206,9 @@ def get_order_data(order_id):
 def get_sending_data(order_id):
     cur.execute("select * from cussending where order_id = '"
                 + order_id + "';")
-    rows=cur.fetchall()
-    if len(rows)==0:
-        return [["?"]*10]
+    rows = cur.fetchall()
+    if len(rows) == 0:
+        return [["?"] * 10]
     else:
         return rows
 
@@ -243,12 +258,26 @@ def add_score(order_id, food_id, score):
     con.commit()
 
 
+# cur.execute('''CREATE VIEW CusdiscountCode AS SELECT id,percentage,max,customer_id FROM discountCode ''')
+def get_customer_discounts(client_id):
+    cur.execute("select id,percentage,max FROM cusdiscountCode "
+                "where customer_id='" + client_id + "' and used=false;")
+    return cur.fetchall()
+
+
+def get_basket_price(client_id):
+    cur.execute("select SUM(cusfood.price*basket.amount) FROM cusfood inner join basket ON(cusfood.id=basket.food_id)"
+                "where basket.customer_id='" + client_id + "';")
+    return cur.fetchall()[0][0]
+
+
 def buy_basket_foods(client_id, discount_id=None):  # return order_id
     rows = get_customer_basket(client_id)
     if len(rows) == 0:
         print("BUY SOMETHING FIRST")
         return "-1"
-    first_food_id = rows[0][0]
+    first_food_id = rows[0][2]
+
     cur.execute("select restaurant_id from cusfood where id='" + first_food_id + "';")
     restaurant_id = cur.fetchall()[0][0]
 
@@ -261,6 +290,7 @@ def buy_basket_foods(client_id, discount_id=None):  # return order_id
     balance = rows[0][4]
     if balance < total_price:
         print("Customer doesn't have enough money!")
+        return
     balance -= total_price
     cur.execute("update customer set balance = " + str(balance)
                 + " where id = '" + client_id + "';")
@@ -273,7 +303,8 @@ def buy_basket_foods(client_id, discount_id=None):  # return order_id
     else:
         cur.execute("insert into cusorder (id,restaurant_id,customer_id,order_time,discount_id,total_price)"
                     " values('" + order_id + "','" + restaurant_id + "','" + client_id + "',current_timestamp,'"
-                    + discount_id + "'," + str(total_price) + ";")
+                    + discount_id + "'," + str(total_price) + ");")
+        cur.execute("update cusdiscountcode set used = true where id='"+discount_id+"';")
         # bargardonim
     cur.execute("insert into CusfoodOrdered (order_id,food_id,amount) select "
                 "'" + order_id + "',food_id,amount from basket where customer_id='" + client_id + "';")
@@ -309,7 +340,6 @@ def receive_order(order_id):
     cur.execute("update Cusdelivery set busy = false where id = " + id_to_str(delivery_id) + ";")
     cur.execute("update Cussending set arriving_time = CURRENT_TIMESTAMP where order_id = " + id_to_str(order_id) + ";")
     con.commit()
-
 
 
 con.commit()

@@ -1,5 +1,6 @@
 # img_viewer.py
-
+import threading
+import time
 import PySimpleGUI as sg
 import client_query_handler
 
@@ -34,6 +35,18 @@ def basket_food_rows_to_list(rows):
     return l
 
 
+# cur.execute('''CREATE VIEW CusdiscountCode AS SELECT id,percentage,max,customer_id FROM discountCode ''')
+def discount_rows_to_list(rows, total_price):
+    l = []
+    for row in rows:
+        if total_price is None:
+            l.append("code: " + row[0] + " - percentage:" + str(row[1]) + " -max: " + str(row[2]))
+        else:
+            l.append("code: " + row[0] + " - percentage:" + str(row[1]) + " -max: " + str(row[2]) + " -final price:"
+                     + str(total_price - min(row[2], total_price * row[1])))
+    return l
+
+
 def order_rows_to_list(rows):
     l = []
     for row in rows:
@@ -51,29 +64,24 @@ def after_set_restaurant(user_data, user_token, restaurant_name):
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text(str(restaurant_name))],
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
             [sg.Button("Done!"), sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
         event, values = window.read()
+        window.close()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
         elif event == "<-back":
-            window.close()
             return
         elif event == "home page":
-            window.close()
             home_page(user_token)
         elif event == "-LIST-":
-            window.close()
             food_name = values["-LIST-"][0].split()[1]
             # after enabling multisearch filter add restorant_id
             food_id = client_query_handler.search_food(["name"], [food_name])[0][0]
             client_query_handler.order_food(user_token, restaurant_id, food_id)
-            after_set_restaurant(user_data, user_token, restaurant_name)
-
         elif event == "Done!":
-            window.close()
             home_page(user_token)
 
 
@@ -84,27 +92,24 @@ def my_basket(user_token, user_data):
         print(l)
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
-            [sg.Button("buy!"), sg.Button("home page"), sg.Button("<-back")]]
+            [sg.Text("order price:"+str(client_query_handler.get_basket_price(user_token)))],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+            [sg.Button("buy!"), sg.Button("home page"), sg.Button("use discount code"),  sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
         event, values = window.read()
+        window.close()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
         elif event == "<-back":
-            window.close()
             return
+        elif event == "use discount code":
+            discount_code=my_discount(user_token,client_query_handler.get_basket_price(user_token))
+            order_id = client_query_handler.buy_basket_foods(user_token,discount_code)
         elif event == "home page":
-            window.close()
             home_page(user_token)
         elif event == "buy!":
             order_id = client_query_handler.buy_basket_foods(user_token)
-            layout2 = [
-                [sg.Text('DONE your odere id is: ' + order_id)],
-            ]
-            window2 = sg.Window("client app odere id", layout2)
-            window.close()
-            home_page(user_token)
 
 
 def order_food(user_data, user_token):
@@ -115,25 +120,20 @@ def order_food(user_data, user_token):
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text('restaurant in your area')],
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
             [sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
         event, values = window.read()
+        window.close()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
         elif event == "<-back":
-            window.close()
             return
         elif event == "home page":
-            window.close()
             home_page(user_token)
         elif event == "-LIST-":
-            window.close()
             after_set_restaurant(user_data, user_token, values["-LIST-"][0].split()[2])
-        window.close()
-        home_page(user_token)
-
 
 
 # cur.execute('''CREATE VIEW Cusorder AS SELECT id,restaurant_id,preparing_time,customer_id,order_time,discount_id, total_price FROM orderr ''')
@@ -154,28 +154,25 @@ def order_detail(order_id, user_token):
                   [sg.Text("your score to delivery is :" + str(("?" if sending_data[2] is None else sending_data[2]))
                            + " chenge it here:")
                       , sg.InputText(), sg.Button("set")],
-                  [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+                  [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
                   [sg.Text("your score to that food:"), sg.InputText()],
                   [sg.Button("home page"), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
         event, values = window.read()
+        window.close()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
         elif event == "<-back":
-            window.close()
             return
         elif event == "home page":
-            window.close()
             home_page(user_token)
         elif event == "set":
-            window.close()
             client_query_handler.add_delivery_score(sending_data[0], int(values[0]))
         elif event == "-LIST-":
             food_name = values["-LIST-"][0].split()[1]
             food_id = client_query_handler.find_food_id(order_id, food_name)
             client_query_handler.add_score(order_id, food_id, int(values[1]))
-        window.close()
 
 
 def my_order(user_token):
@@ -184,23 +181,42 @@ def my_order(user_token):
         l = order_rows_to_list(rows)
         print(l)
         layout = [
-            [sg.Listbox(values=l, size=(70, 12), key='-LIST-', enable_events=True)],
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
             [sg.Button("home page"), sg.Button("<-back")]]
         window = sg.Window("client app", layout)
         event, values = window.read()
+        window.close()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
         elif event == "<-back":
-            window.close()
             return
         elif event == "home page":
-            window.close()
             home_page(user_token)
         elif event == "-LIST-":
             order_id = values["-LIST-"][0].split()[1]
             #  client_query_handler.b
-            window.close()
             order_detail(order_id, user_token)
+
+
+def my_discount(user_token, total_price=None):
+    while True:
+        rows = client_query_handler.get_customer_discounts(user_token)
+        l = discount_rows_to_list(rows, total_price)
+
+        layout = [
+            [sg.Listbox(values=l, size=(200, 12), key='-LIST-', enable_events=True)],
+            [sg.Button("home page")]]
+
+        window = sg.Window("client app", layout)
+        event, values = window.read()
+        window.close()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        if event == "-LIST-":
+            discount_id = values["-LIST-"][0].split()[1]
+            return discount_id
+        elif event == "home page":
+            home_page(user_token)
 
 
 def home_page(user_token):
@@ -211,30 +227,26 @@ def home_page(user_token):
         layout = [
             [sg.Text('balance:' + str(user_data[4]))],
             [sg.Text('charge account'), sg.InputText(), sg.Button("charge")],
-            [sg.Button("order food"), sg.Button("buy basket"), sg.Button("my orders"), sg.Button("<-back")]]
+            [sg.Button("order food"), sg.Button("buy basket"), sg.Button("my orders"), sg.Button("my discount"),
+             sg.Button("<-back")]]
         window = sg.Window("client app", layout)
         event, values = window.read()
+        window.close()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
+        elif event == "my discount":
+            my_discount(user_token)
         elif event == "<-back":
-            window.close()
             return
         elif event == "charge":
             client_query_handler.charge_account(user_token, int(values[0]))
-            window.close()
-            home_page(user_token)
+            continue
         elif event == "order food":
-            window.close()
             order_food(user_data, user_token)
         elif event == "my orders":
-            window.close()
             my_order(user_token)
         elif event == "buy basket":
-            window.close()
             my_basket(user_token, user_data)
-        window.close()
-        home_page(user_token)
-
 
 
 def sing_up():

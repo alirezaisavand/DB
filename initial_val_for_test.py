@@ -37,8 +37,13 @@ delivery_query_handeler.add_new_delivery("mojan", 50, "3")
 delivery_query_handeler.add_new_delivery("raha", 79, "4")
 delivery_query_handeler.add_new_delivery("arshia", 90, "4")
 
-#add test customer
-client_query_handler.add_customer("test","test","arshia","2","9128381385")
+# add test customer
+c1 = client_query_handler.add_customer("test", "test", "arshia", "2", "9128381385")
 
+# add discount
+client_query_handler.add_discount_code(c1, 0.5, 20)
+client_query_handler.add_discount_code(c1, 0.2, 10)
+client_query_handler.add_discount_code(c1, 0.3, 70)
+client_query_handler.add_discount_code(c1, 0.1, 40)
 
 print("initial data added to the data base")
