@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import delivery_query_handeler
 
 def initial_screen():
     wrong_info = 0

@@ -9,6 +9,9 @@ con = psycopg2.connect(database=data["postgresql"]["database"], user=data["postg
                        port=data["postgresql"]["port"])
 cur = con.cursor()
 
+def id_to_str(id):
+    str_id = "\'" + id + "\'"
+    return str_id
 
 def get_my_order(delivery_id):
     cur.execute('''SELECT orderId,cost FROM Delsending 
@@ -48,5 +51,15 @@ def get_delivery_basket(delivery_id):
     for row in rows:
         print("order_id = ", row[0])
     con.commit()
+
+def check_name(name):
+    cur.execute(
+        "select id from delivery where name=" + id_to_str(
+            name) + ";")
+    rows = cur.fetchall()
+    con.commit()
+    if len(rows) == 0:
+        return -1
+    return rows[0][0]
 
 con.commit()
