@@ -45,7 +45,7 @@ def add_new_delivery(name, salary, area):
     con.commit()
 
 def get_delivery_basket(delivery_id):
-    cur.execute("select * from Delsending where delivery_id='" + delivery_id + "';")
+    cur.execute("select * from Ressending where delivery_id='" + delivery_id + "';")
     rows = cur.fetchall()
 
     for row in rows:
