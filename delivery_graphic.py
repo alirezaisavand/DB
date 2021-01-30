@@ -3,8 +3,7 @@ import PySimpleGUI as sg
 def initial_screen():
     wrong_info = 0
     while True:
-        layout = [[sg.Text('Enter Username',size=(20, 1)), sg.InputText()],
-                  [sg.Text('Enter Password',size=(20, 1)), sg.InputText()],
+        layout = [[sg.Text('Enter Name',size=(20, 1)), sg.InputText()],
                   [sg.Button('OK', size=(10, 1)), sg.Button('Sign Up', size=(10, 1))]]
 
         if wrong_info:
@@ -18,14 +17,15 @@ def initial_screen():
             exit(0)
 
         if event == "OK":
-            my_tOKen = restaurant_query_handeler.check_user_pass(values[0], values[1])
+            my_tOKen = delivery_query_handeler.check_name(values[0])
             if my_tOKen == -1:
                 print("wrong Information")
                 wrong_info = 1
             else:
-                wrong_info = 0
-                window.close()
-                home_page(my_tOKen)
+                print("Hi")
+            #    wrong_info = 0
+            #    window.close()
+            #    home_page(my_tOKen)
             window.close()
         elif event == "Sign Up":
             wrong_info = 0
