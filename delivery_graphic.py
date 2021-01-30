@@ -1,6 +1,22 @@
 import PySimpleGUI as sg
 import delivery_query_handeler
 
+def home_page(id):
+    print(id)
+
+    while True:
+        layout = [
+            [sg.Button("Back", size=(20, 2))]
+        ]
+
+        window = sg.Window("Delivery App", layout)
+
+        event, values = window.read()
+
+        if event == "Back":
+            window.close()
+            return
+
 def initial_screen():
     wrong_info = 0
     while True:
@@ -20,13 +36,12 @@ def initial_screen():
         if event == "OK":
             my_tOKen = delivery_query_handeler.check_name(values[0])
             if my_tOKen == -1:
-                print("wrong Information")
+                print("Wrong Information")
                 wrong_info = 1
             else:
-                print("Hi")
-            #    wrong_info = 0
-            #    window.close()
-            #    home_page(my_tOKen)
+                wrong_info = 0
+                window.close()
+                home_page(my_tOKen)
             window.close()
         elif event == "Sign Up":
             wrong_info = 0
