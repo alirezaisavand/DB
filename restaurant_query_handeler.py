@@ -17,13 +17,13 @@ def id_to_str(id):
 
 
 def food_is_ready(order_id):
-    cur.execute('''UPDATE Resorder SET preparingTime = CURRENT_TIMESTAMP WHERE ordertId=''' + str(order_id))
+    cur.execute("UPDATE Resorder SET preparing_Time = CURRENT_TIMESTAMP WHERE id=" + id_to_str(order_id) + ";")
+    con.commit()
 
 
 def get_not_completed_order(restaurant_id):
-    cur.execute('''SELECT id from Resorder WHERE restaurantId=''' + str(restaurant_id) + '''
-    AND preparingTime IS NULL'''
-                )
+    cur.execute("SELECT id from Resorder WHERE restaurant_id=" + id_to_str(restaurant_id) + " AND preparing_time IS NULL;")
+    con.commit()
     return cur.fetchall()
 
 
@@ -36,21 +36,24 @@ def add_food_to_restaurant(restaurant_id, food_name, food_type, food_description
 
 
 def set_delivery_for_order(order_id, delivery_id):
-    cur.execute('''INSERT INTO Ressending(orderId,deliveryId) VALUES(''' + str(order_id) + "," + str(delivery_id) + ")")
+    cur.execute('''INSERT INTO Ressending(order_id,delivery_id) VALUES(''' + id_to_str(order_id) + "," + id_to_str(delivery_id) + ")")
     con.commit()
 
 
 def increase_amount(food_id, amount):
-    cur.execute("SELECT amount from Resfood WHERE Id=" + id_to_str(food_id))
+    cur.execute("SELECT amount from Resfood WHERE id=" + id_to_str(food_id))
     rows = cur.fetchall()
     print(len(rows))
     amount += rows[0][0]
-    cur.execute("UPDATE Resfood SET amount=" + str(amount) + " WHERE Id=" + id_to_str(food_id))
+    cur.execute("UPDATE Resfood SET amount=" + str(amount) + " WHERE id=" + id_to_str(food_id))
     con.commit()
 
 def is_arrived(order_id):
+    if not is_set_delivery(order_id):
+        return False
     cur.execute("select order_id from Ressending where order_id = " + id_to_str(
         order_id) + " and arriving_time is null;")
+    con.commit()
     if len(cur.fetchall()) == 0:
         return True
     return False
@@ -66,7 +69,10 @@ def get_customer_name(customer_id):
 
 def get_arriving_time(order_id):
     cur.execute("select arriving_time from Ressending where order_id = " + id_to_str(order_id) + ";")
-    return cur.fetchall()[0][0]
+    row = cur.fetchall()
+    if len(row):
+        return row[0][0]
+    return "Not Send"
 
 def is_set_delivery(order_id):
     cur.execute("select order_id from Ressending where order_id = " + id_to_str(order_id) + ";")
@@ -78,7 +84,11 @@ def is_set_delivery(order_id):
 def get_order_foods(order_id):
     cur.execute("select food_id from ResfoodOrdered where order_id = " + id_to_str(order_id) + ";")
     rows = cur.fetchall()
-    return rows
+    food_ids = []
+    for i in rows:
+        food_ids.append(i[0])
+    print(food_ids)
+    return food_ids
 
 def get_food_name(food_id):
     cur.execute("select name from Resfood where id = " + id_to_str(food_id) + ";")
@@ -86,13 +96,19 @@ def get_food_name(food_id):
 
 def get_food_names(foods):
     food_names = []
+    print(foods)
     for food_id in foods:
         food_name = get_food_name(food_id)
         food_names.append(food_name)
     return food_names
 
+def get_order_food_names(order_id):
+    foods = get_order_foods(order_id)
+    food_names = get_food_names(foods)
+    return food_names
+
 def is_ready(order_id):
-    cur.execute("select order_id from Resorder where order_id = " + id_to_str(order_id) + " and preparing_time is not null")
+    cur.execute("select id from Resorder where id = " + id_to_str(order_id) + " and preparing_time is not null;")
     rows = cur.fetchall()
     if len(rows) > 0:
         return True
@@ -103,7 +119,6 @@ def get_restaurant_orders(restaurant_id, filter_arrived, filter_set_delivery, fi
     orders_rows = cur.fetchall()
     results = []
     for row in orders_rows:
-        res = []
         customer_id = row[3]
 
         customer_name = get_customer_name(customer_id)
@@ -111,8 +126,6 @@ def get_restaurant_orders(restaurant_id, filter_arrived, filter_set_delivery, fi
         order_time = row[4]
         total_price = row[5]
         order_id = row[0]
-        arriving_time = get_arriving_time(order_id)
-
         if filter_arrived and is_arrived(order_id):
             continue
 
@@ -122,14 +135,12 @@ def get_restaurant_orders(restaurant_id, filter_arrived, filter_set_delivery, fi
         if filter_ready and is_ready(order_id):
             continue
 
-        print("customer name: " + customer_name + " preparing time: " + preparing_time +
-              " order time: " + order_time + " arriving time: " + arriving_time +
-              " total price: " + total_price)
+        arriving_time = get_arriving_time(order_id)
 
-        foods = get_order_foods(order_id)
-        food_names = get_food_names(foods)
 
-        results.append([order_id, customer_name, preparing_time, order_time, total_price, arriving_time, food_names])
+
+
+        results.append([order_id, customer_name, preparing_time, order_time, total_price, arriving_time])
 
     return results
 

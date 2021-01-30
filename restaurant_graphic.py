@@ -20,24 +20,15 @@ def food_rows_to_list(rows):
         l.append("food id: " + row[0] + " food name: " + row[1])
     return l
 
-def my_orders(user_token):
-    filter_ready = False
-    filter_set = False
-    filter_arrived = False
+def order_details(user_token, order_id):
+
     while True:
-        orders = restaurant_query_handeler.get_restaurant_orders(user_token, filter_arrived, filter_set, filter_ready)
-        rows = []
-        for order in orders:
-            rows.append(order[:-1])
-        l = order_rows_to_list(rows)
-        show_number = min(len(l), 12)
-        print(l)
+        food_names = restaurant_query_handeler.get_order_food_names(order_id)
+        show_number = min(len(food_names), 12)
+
         layout = [
-            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=False)],
-            [sg.Button("Home Page"), sg.Button("Back")],
-            [sg.Checkbox("Filter Ready", size=(20, 1), key="-READY-")],
-            [sg.Checkbox("Filter Arrived", size=(20, 1), key="-ARRIVED-")],
-            [sg.Checkbox("Filter Set Delivery", size=(20, 1), key="-SET-")]
+            [sg.Listbox(values=food_names, size=(70, show_number), key='-LIST-', enable_events=False)],
+            [sg.Button("Home Page", size=(10, 1)), sg.Button("Back", size=(10, 1))]
         ]
         window = sg.Window("Restaurant App", layout)
         event, values = window.read()
@@ -49,30 +40,59 @@ def my_orders(user_token):
         elif event == "Home Page":
             window.close()
             home_page(user_token)
-        elif event == "Filter Ready":
+
+def my_orders(user_token):
+    filter_ready = False
+    filter_set = False
+    filter_arrived = False
+    while True:
+        orders = restaurant_query_handeler.get_restaurant_orders(user_token, filter_arrived, filter_set, filter_ready)
+        l = order_rows_to_list(orders)
+        show_number = min(len(l), 12)
+        print(l)
+        layout = [
+            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+            [sg.Checkbox("Filter Ready", size=(20, 1), key="-READY-", enable_events=True, default=filter_ready)],
+            [sg.Checkbox("Filter Arrived", size=(20, 1), key="-ARRIVED-", enable_events=True, default=filter_arrived)],
+            [sg.Checkbox("Filter Set Delivery", size=(20, 1), key="-SET-", enable_events=True, default=filter_set)],
+            [sg.Button("Home Page", size=(10, 1)), sg.Button("Back", size=(10, 1))]
+        ]
+        window = sg.Window("Restaurant App", layout)
+        event, values = window.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        elif event == "Back":
+            window.close()
+            return
+        elif event == "Home Page":
+            window.close()
+            home_page(user_token)
+        elif event == "-READY-":
             window.close()
             filter_ready = values["-READY-"]
-        elif event == "Filter Arrived":
+        elif event == "-ARRIVED-":
             window.close()
             filter_arrived = values["-ARRIVED-"]
-        elif event == "Filter Set Delivery":
+        elif event == "-SET-":
             window.close()
             filter_set = values["-SET-"]
-
+        elif event == "-LIST-":
+            if show_number > 0:
+                order_id = values["-LIST-"][0].split()[2]
+            #  client_query_handler.b
+                window.close()
+                order_details(user_token, order_id)
 
 def set_ready(user_token):
 
     while True:
         orders = restaurant_query_handeler.get_restaurant_orders(user_token, False, False, True)
-        rows = []
-        for order in orders:
-            rows.append(order[:-1])
-        l = order_rows_to_list(rows)
+        l = order_rows_to_list(orders)
         show_number = min(len(l), 12)
         print(l)
         layout = [
             [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
-            [sg.Button("Home Page"), sg.Button("Back")]]
+            [sg.Button("Home Page", size=(10, 1)), sg.Button("Back", size=(10,1))]]
         window = sg.Window("Restaurant App", layout)
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
@@ -103,13 +123,13 @@ def increase_food(user_tOKen):
                 [sg.Text("Please Fill Inputs Correctly", text_color='red')],
                 [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
                 [sg.Text("Enter Increasing Amount: "), sg.InputText()],
-                [sg.Button("Home Page"), sg.Button("Back")]
+                [sg.Button("Home Page", size=(10, 1)), sg.Button("Back", size=(10, 1))]
             ]
         else:
             layout = [
                 [sg.Listbox(values=l, size = (70, show_number), key = '-LIST-', enable_events=True)],
                 [sg.Text("Enter Increasing Amount: "), sg.InputText()],
-                [sg.Button("Home page"), sg.Button("Back")]
+                [sg.Button("Home page", size=(10, 1)), sg.Button("Back", size=(10,1))]
             ]
 
         window = sg.Window("Restaurant App", layout)
