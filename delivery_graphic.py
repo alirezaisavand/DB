@@ -7,21 +7,46 @@ def check_complete(values):
             return False
     return True
 
-def home_page(id):
-    print(id)
-
+def my_orders (id):
     while True:
         layout = [
-            [sg.Button("Back", size=(20, 2))]
+            [sg.Button("Back", size = (20, 1))]
         ]
 
         window = sg.Window("Delivery App", layout)
 
         event, values = window.read()
 
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+
         if event == "Back":
             window.close()
             return
+
+def home_page(id):
+    while True:
+        layout = [
+            [sg.Button("My Orders", size=(20, 1))],
+            [sg.Button("Back", size=(20, 1))]
+        ]
+
+        window = sg.Window("Delivery App", layout)
+
+        event, values = window.read()
+
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+
+        if event == "Back":
+            window.close()
+            return
+
+        if event == "My Orders":
+            window.close()
+            my_orders(id)
+
+
 
 def sign_up():
     incomplete = 0
