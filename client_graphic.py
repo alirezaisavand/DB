@@ -81,11 +81,11 @@ def choose_restaurant_filter():
             by.append("score")
             what.append(values[0])
 
-        elif event == "-type-":
+        elif event == "-type-" and len(types):
             by.append("type")
             what.append(values["-type-"][0][0])
 
-        elif event == "-area-":
+        elif event == "-area-" and len(areas):
             by.append("area")
             what.append(values["-area-"][0][0])
 
@@ -127,13 +127,10 @@ def choose_food_filter():
             by.append("price")
             what.append(-values[2])
 
-        elif event == "-type-":
+        elif event == "-type-" and len(types):
             by.append("type")
             what.append(values["-type-"][0][0])
 
-        elif event == "-area-":
-            by.append("area")
-            what.append(values["-area-"][0][0])
 
         elif event == "apply filters":
             return [by, what]
@@ -172,7 +169,7 @@ def choose_food(user_data, user_token, restaurant_name):
             by += ss[0]
             what += ss[1]
 
-        elif event == "-LIST-":
+        elif event == "-LIST-" and len(l) != 0:
             food_name = values["-LIST-"][0].split()[1]
             # after enabling multisearch filter add restorant_id
 
@@ -239,7 +236,7 @@ def choose_restaurant(user_data, user_token):
             return
         elif event == "home page":
             home_page(user_token)
-        elif event == "-LIST-":
+        elif event == "-LIST-" and len(l) != 0:
             choose_food(user_data, user_token, values["-LIST-"][0].split()[2])
 
 
@@ -276,7 +273,7 @@ def order_detail(order_id, user_token):
             home_page(user_token)
         elif event == "set" and values[0] != "":
             client_query_handler.add_delivery_score(sending_data[0], int(values[0]))
-        elif event == "-LIST-" and values[1] != "":
+        elif event == "-LIST-" and values[1] != "" and len(l) != 0:
             food_name = values["-LIST-"][0].split()[1]
             food_id = client_query_handler.find_food_id(order_id, food_name)
             client_query_handler.add_score(order_id, food_id, int(values[1]))
@@ -299,7 +296,7 @@ def my_orders(user_token):
             return
         elif event == "home page":
             home_page(user_token)
-        elif event == "-LIST-":
+        elif event == "-LIST-" and len(l) != 0:
             order_id = values["-LIST-"][0].split()[1]
             #  client_query_handler.b
             order_detail(order_id, user_token)
@@ -319,7 +316,7 @@ def my_discounts(user_token, total_price=None):
         window.close()
         if event == "Exit" or event == sg.WIN_CLOSED:
             exit(0)
-        if event == "-LIST-":
+        if event == "-LIST-" and len(l) != 0:
             discount_id = values["-LIST-"][0].split()[1]
             return discount_id
         elif event == "home page":
