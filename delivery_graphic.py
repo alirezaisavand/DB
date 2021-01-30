@@ -7,9 +7,22 @@ def check_complete(values):
             return False
     return True
 
-def my_orders (id):
+def basket_rows_to_list (basket):
+    l = []
+    for row in basket:
+        l.append("order id: " + row[0])
+
+    return l
+
+def my_basket (id):
     while True:
+        basket = delivery_query_handeler.get_delivery_basket(id)
+        l = basket_rows_to_list(basket)
+
+        show_number = min(len(l), 12)
+
         layout = [
+            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
             [sg.Button("Back", size = (20, 1))]
         ]
 
@@ -27,7 +40,7 @@ def my_orders (id):
 def home_page(id):
     while True:
         layout = [
-            [sg.Button("My Orders", size=(20, 1))],
+            [sg.Button("My Basket", size=(20, 1))],
             [sg.Button("Back", size=(20, 1))]
         ]
 
@@ -42,9 +55,9 @@ def home_page(id):
             window.close()
             return
 
-        if event == "My Orders":
+        if event == "My Basket":
             window.close()
-            my_orders(id)
+            my_basket(id)
 
 
 
