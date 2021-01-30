@@ -353,7 +353,7 @@ def home_page(user_token):
             my_basket(user_token, user_data)
 
 
-def sing_up():
+def sign_up():
     while True:
         layout = [
             [sg.Text('Enter username'), sg.InputText()],
@@ -379,7 +379,7 @@ def initial_screen():
     while True:
         layout = [[sg.Text('Enter username'), sg.InputText()],
                   [sg.Text('Enter password'), sg.InputText()],
-                  [sg.Button('ok'), sg.Button('sing up'), sg.Button("<-back")]]
+                  [sg.Button('ok'), sg.Button('sign up'), sg.Button("<-back")]]
 
         window = sg.Window("client app", layout)
         event, values = window.read()
@@ -391,15 +391,15 @@ def initial_screen():
                 layout = [[sg.Text('wrong user pass')],
                           [sg.Text('Enter username'), sg.InputText()],
                           [sg.Text('Enter password'), sg.InputText()],
-                          [sg.Button('ok'), sg.Button('sing up')]]
+                          [sg.Button('ok'), sg.Button('sign up')]]
                 window.close()
                 window = sg.Window("client app", layout)
             else:
                 window.close()
                 home_page(my_token)
-        elif event == "sing up":
+        elif event == "sign up":
             window.close()
-            sing_up()
+            sign_up()
         elif event == "<-back":
             window.close()
             return
