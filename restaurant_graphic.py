@@ -7,17 +7,23 @@ def check_complete(values):
             return False
     return True
 
+def delivery_rows_to_list(rows):
+    l = []
+    for row in rows:
+        l.append("Delivery Id: " + row[0] + " Name: " + row[1] + " Area: " + row[2])
+    return l
+
 def order_rows_to_list(rows):
     l = []
     for row in rows:
-        l.append("order id: " + row[0] + " customer name: " + row[1] + " preparing time: " + str(row[2]) + " order time: " + str(row[3]) +
-                 " price: " + str(row[4]) + " arriving time" + str(row[5]))
+        l.append("Order Id: " + row[0] + " Customer Name: " + row[1] + " Preparing Time: " + str(row[2]) + " Order Time: " + str(row[3]) +
+                 " Price: " + str(row[4]) + " Arriving Time" + str(row[5]))
     return l
 
 def food_rows_to_list(rows):
     l = []
     for row in rows:
-        l.append("food id: " + row[0] + " food name: " + row[1])
+        l.append("Food Id: " + row[0] + " Food Name: " + row[1])
     return l
 
 def order_details(user_token, order_id):
@@ -183,6 +189,59 @@ def add_new_food(user_tOKen):
                 incomplete = 1
             window.close()
 
+def choose_delivery_for_order(user_token, order_id):
+    while True:
+        deliveries = restaurant_query_handeler.get_free_deliveries(user_token)
+        l = delivery_rows_to_list(deliveries)
+        show_number = min(len(l), 12)
+        print(l)
+        layout = [
+            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+            [sg.Button("Home Page", size=(10, 1)), sg.Button("Back", size=(10, 1))]]
+        window = sg.Window("Restaurant App", layout)
+        event, values = window.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        elif event == "Back":
+            window.close()
+            return
+        elif event == "Home Page":
+            window.close()
+            home_page(user_token)
+        elif event == "-LIST-":
+            if show_number > 0:
+                delivery_id = values["-LIST-"][0].split()[2]
+                #  client_query_handler.b
+                restaurant_query_handeler.set_delivery_for_order(order_id, delivery_id)
+                window.close()
+                return
+
+
+def set_delivery(user_token):
+    while True:
+        orders = restaurant_query_handeler.get_restaurant_orders(user_token, False, True, False)
+        l = order_rows_to_list(orders)
+        show_number = min(len(l), 12)
+        print(l)
+        layout = [
+            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+            [sg.Button("Home Page", size=(10, 1)), sg.Button("Back", size=(10,1))]]
+        window = sg.Window("Restaurant App", layout)
+        event, values = window.read()
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+        elif event == "Back":
+            window.close()
+            return
+        elif event == "Home Page":
+            window.close()
+            home_page(user_token)
+        elif event == "-LIST-":
+            if show_number > 0:
+                order_id = values["-LIST-"][0].split()[2]
+            #  client_query_handler.b
+                window.close()
+                choose_delivery_for_order(user_token, order_id)
 
 def home_page(user_token):
     while True:
@@ -214,6 +273,9 @@ def home_page(user_token):
         elif event == "Add New Food":
             window.close()
             add_new_food(user_token)
+        elif event == "Set Delivery":
+            window.close()
+            set_delivery(user_token)
         elif event == "My Orders":
             window.close()
             my_orders(user_token)

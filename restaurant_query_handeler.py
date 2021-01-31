@@ -36,9 +36,15 @@ def add_food_to_restaurant(restaurant_id, food_name, food_type, food_description
 
 
 def set_delivery_for_order(order_id, delivery_id):
-    cur.execute('''INSERT INTO Ressending(order_id,delivery_id) VALUES(''' + id_to_str(order_id) + "," + id_to_str(delivery_id) + ")")
+    cur.execute('''INSERT INTO Ressending VALUES(''' + id_to_str(order_id) + "," + id_to_str(delivery_id) + ", null);")
+    cur.execute("update resdelivery set busy = True where id = " + id_to_str(delivery_id) + ";")
     con.commit()
 
+def get_free_deliveries(restaurant_id):
+    info = get_restaurant_info(restaurant_id)
+    area = info[3]
+    cur.execute("select * from resdelivery where area = " + id_to_str(area) + " and busy = False;")
+    return cur.fetchall()
 
 def increase_amount(food_id, amount):
     cur.execute("SELECT amount from Resfood WHERE id=" + id_to_str(food_id))
