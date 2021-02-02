@@ -35,11 +35,12 @@ def update_delivery_salary(delivery_id, new_salary):
     con.commit()
 
 
-def add_new_delivery(name, salary, area):
-    cur.execute("INSERT INTO Deldelivery VALUES('" + Id_handler.get_new_id() + "','" + name + "'," + str(
+def add_new_delivery(name, salary, area, user, pas):
+    id = Id_handler.get_new_id()
+    cur.execute("insert into delivery values('" + id + "','" + name + "'," + str(
             salary) + ",'" + area + "',false);")
-    print("INSERT INTO Deldelivery VALUES('" + Id_handler.get_new_id() + "','" + name + "'," + str(
-            salary) + ",'" + area + "',false);")
+    cur.execute("insert into del_user_pass values('" + id + "', '" + user + "', '" + pas + "')")
+
     con.commit()
 
 def get_delivery_basket(delivery_id):
@@ -75,12 +76,18 @@ def find_delivery_basket(delivery_id, mine, not_arrived):
 def get_order_information(order_id):
     cur.execute('''select * from Resorder where id = ''' + id_to_str(id))
     rows = cur.fetchall()
+    con.commit()
     return rows
 
-def check_name(name):
-    cur.execute(
-        "select id from delivery where name=" + id_to_str(
-            name) + ";")
+def find_username(username):
+    cur.execute('''select * from del_user_pass where username = ''' + id_to_str(username))
+    rows = cur.fetchall()
+    con.commit()
+    return rows
+
+def check_user_pass(user, pas):
+    cur.execute("select delivery_id from del_user_pass where username = " + id_to_str(user) +
+                "and password = " + id_to_str(pas) + ";")
     rows = cur.fetchall()
     con.commit()
     if len(rows) == 0:

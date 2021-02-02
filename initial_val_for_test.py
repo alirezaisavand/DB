@@ -30,12 +30,12 @@ restaurant_query_handeler.add_food_to_restaurant(b5, "pizpiz", "main", "in ye gh
 restaurant_query_handeler.add_food_to_restaurant(b5, "sosmos", "pass ghaza", "in ye ghazaye alist", 152)
 
 # delivery
-delivery_query_handeler.add_new_delivery("ali", 20, "2")
-delivery_query_handeler.add_new_delivery("akbar", 20, "2")
-delivery_query_handeler.add_new_delivery("sara", 40, "3")
-delivery_query_handeler.add_new_delivery("mojan", 50, "3")
-delivery_query_handeler.add_new_delivery("raha", 79, "4")
-delivery_query_handeler.add_new_delivery("arshia", 90, "4")
+delivery_query_handeler.add_new_delivery("ali", 20, "2", "a", "a")
+delivery_query_handeler.add_new_delivery("akbar", 20, "2", "b", "b")
+delivery_query_handeler.add_new_delivery("sara", 40, "3", "c", "c")
+delivery_query_handeler.add_new_delivery("mojan", 50, "3", "d", "d")
+delivery_query_handeler.add_new_delivery("raha", 79, "4", "e", "e")
+delivery_query_handeler.add_new_delivery("arshia", 90, "4", "f", "f")
 
 # add test customer
 c1 = client_query_handler.add_customer("test", "test", "arshia", "2", "9128381385")

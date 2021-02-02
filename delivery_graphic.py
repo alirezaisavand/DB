@@ -195,9 +195,12 @@ def home_page(id):
 
 
 def sign_up():
+    username_error = False
     incomplete = False
     while True:
         layout = [
+            [sg.Text('Enter Username', size=(20, 1)), sg.InputText()],
+            [sg.Text('Enter Password', size=(20, 1)), sg.InputText()],
             [sg.Text('Enter Name',size=(20, 1)), sg.InputText()],
             [sg.Text('Enter Salary',size=(20, 1)), sg.InputText()],
             [sg.Text('Enter Area',size=(20, 1)), sg.InputText()],
@@ -206,6 +209,12 @@ def sign_up():
 
         if incomplete:
             layout.append([sg.Text('Please Fill Inputs', text_color='red')])
+
+        if (username_error):
+            layout.append([sg.Text('This Username is already Taken', text_color='red')])
+
+        incomplete = False
+        username_error = False
 
         window = sg.Window("Delivery App", layout)
 
@@ -220,10 +229,15 @@ def sign_up():
         elif event == "OK":
             if check_complete(values):
                 incomplete = False
-                delivery_query_handeler.add_new_delivery(values[0], values[1], values[2])
-                print("Delivery Added")
-                window.close()
-                return
+                l = delivery_query_handeler.find_username(values[0])
+
+                if len(l) == 0:
+                    delivery_query_handeler.add_new_delivery(values[2], values[3], values[4], values[0], values[1])
+                    print("Delivery Added")
+                    window.close()
+                    return
+                else:
+                    username_error = True
             else:
                 incomplete = True
             window.close()
@@ -231,8 +245,11 @@ def sign_up():
 def initial_screen():
     wrong_info = 0
     while True:
-        layout = [[sg.Text('Enter Name',size=(20, 1)), sg.InputText()],
-                  [sg.Button('OK', size=(10, 1)), sg.Button('Sign Up', size=(10, 1))]]
+        layout = [
+            [sg.Text('Enter Username',size=(20, 1)), sg.InputText()],
+            [sg.Text('Enter Password', size=(20, 1)), sg.InputText()],
+            [sg.Button('OK', size=(10, 1)), sg.Button('Sign Up', size=(10, 1))]
+        ]
 
         if wrong_info:
             layout.append([sg.Text("Wrong Information", text_color='red')])
@@ -245,7 +262,7 @@ def initial_screen():
             exit(0)
 
         if event == "OK":
-            my_token = delivery_query_handeler.check_name(values[0])
+            my_token = delivery_query_handeler.check_user_pass(values[0], values[1])
             if my_token == -1:
                 print("Wrong Information")
                 wrong_info = 1
