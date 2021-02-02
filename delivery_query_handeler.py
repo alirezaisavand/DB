@@ -14,26 +14,24 @@ def id_to_str(id):
     return str_id
 
 def get_my_order(delivery_id):
-    cur.execute('''SELECT orderId,cost FROM Delsending 
-                        WHERE deliveryid=''' + str(delivery_id) + ''' AND arrivingTime is NULL''')
+    cur.execute('''SELECT order_id,cost FROM Delsending 
+                        WHERE delivery_id=''' + id_to_str(delivery_id) + ''' AND arriving_time is NULL''')
     rows = cur.fetchall()
 
-    for row in rows:
-        return row
-    return None
+    return rows
 
 
 def my_order_arrived(delivery_id):
     cur.execute('''Update Delsending 
-                SET arrivingTime = CURRENT_TIMESTAMP
-            WHERE deliveryid=''' + str(delivery_id) + ''' AND arrivingTime is NULL''')
+                SET arriving_time = CURRENT_TIMESTAMP
+            WHERE delivery_id=''' + id_to_str(delivery_id) + ''' AND arriving_time is NULL''')
     con.commit()
 
 
 def update_delivery_salary(delivery_id, new_salary):
     cur.execute('''Update Deldelivery
                     SET salary =''' + str(new_salary) + '''
-                WHERE deliveryid=''' + str(delivery_id))
+                WHERE delivery_id=''' + id_to_str(delivery_id))
     con.commit()
 
 
@@ -53,6 +51,12 @@ def get_delivery_basket(delivery_id):
     con.commit()
 
     return rows
+
+def find_delivery_basket(delivery_id, not_arrived):
+    if not_arrived:
+        return get_delivery_basket(delivery_id)
+
+    return get_my_order(delivery_id)
 
 def check_name(name):
     cur.execute(

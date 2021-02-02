@@ -9,20 +9,23 @@ def check_complete(values):
 
 def basket_rows_to_list (basket):
     l = []
+
     for row in basket:
         l.append("order id: " + row[0])
 
     return l
 
 def my_basket (id):
+    not_arrived = False
     while True:
-        basket = delivery_query_handeler.get_delivery_basket(id)
+        basket = delivery_query_handeler.find_delivery_basket(id, not_arrived)
         l = basket_rows_to_list(basket)
 
         show_number = min(len(l), 12)
 
         layout = [
             [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+            [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True, default=not_arrived)],
             [sg.Button("Back", size = (20, 1))]
         ]
 
@@ -36,6 +39,10 @@ def my_basket (id):
         if event == "Back":
             window.close()
             return
+
+        if event == "-NOTARRIVED-":
+            not_arrived = values["-NOTARRIVED-"]
+            window.close()
 
 def home_page(id):
     while True:
