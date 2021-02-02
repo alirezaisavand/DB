@@ -17,17 +17,27 @@ def basket_rows_to_list (basket):
 
 def my_basket (id):
     not_arrived = False
+    error = False
     while True:
         basket = delivery_query_handeler.find_delivery_basket(id, not_arrived)
         l = basket_rows_to_list(basket)
 
         show_number = min(len(l), 12)
 
-        layout = [
-            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
-            [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True, default=not_arrived)],
-            [sg.Button("Back", size = (20, 1))]
-        ]
+        if error:
+            layout = [
+                [sg.Text("You don't have any order for Arriving", text_color='red')],
+                [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+                [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True,
+                             default=not_arrived)],
+                [sg.Button("Back", size=(20, 1)), sg.Button("Order Arrived", size=(20, 1))]
+            ]
+        else:
+            layout = [
+                [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+                [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True, default=not_arrived)],
+                [sg.Button("Back", size = (20, 1)), sg.Button("Order Arrived", size = (20, 1))]
+            ]
 
         window = sg.Window("Delivery App", layout)
 
@@ -42,7 +52,19 @@ def my_basket (id):
 
         if event == "-NOTARRIVED-":
             not_arrived = values["-NOTARRIVED-"]
+            error = False
             window.close()
+
+        if event == "Order Arrived":
+            rows = delivery_query_handeler.get_my_order(id)
+
+            if len(rows) == 0:
+                error = True
+                window.close()
+            else:
+                delivery_query_handeler.my_order_arrived(id)
+                error = False
+
 
 def home_page(id):
     while True:
@@ -69,7 +91,7 @@ def home_page(id):
 
 
 def sign_up():
-    incomplete = 0
+    incomplete = False
     while True:
         layout = [
             [sg.Text('Enter Name',size=(20, 1)), sg.InputText()],
@@ -93,13 +115,13 @@ def sign_up():
 
         elif event == "OK":
             if check_complete(values):
-                incomplete = 0
+                incomplete = False
                 delivery_query_handeler.add_new_delivery(values[0], values[1], values[2])
                 print("Delivery Added")
                 window.close()
                 return
             else:
-                incomplete = 1
+                incomplete = True
             window.close()
 
 def initial_screen():
