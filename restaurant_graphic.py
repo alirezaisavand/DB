@@ -305,10 +305,11 @@ def sign_up():
             if check_complete(values):
                 incomplete = 0
                 restaurant_query_handeler.add_restaurant(values[0], values[1], values[2], values[3], values[4], values[5], values[6])
+                window.close()
                 initial_screen()
             else:
                 incomplete = 1
-            window.close()
+                window.close()
 
 
 def initial_screen():
