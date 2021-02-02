@@ -46,17 +46,36 @@ def get_delivery_basket(delivery_id):
     cur.execute("select * from Ressending where delivery_id='" + delivery_id + "';")
     rows = cur.fetchall()
 
-    for row in rows:
-        print("order_id = ", row[0])
+#    for row in rows:
+#        print("order_id = ", row[0])
     con.commit()
 
     return rows
 
-def find_delivery_basket(delivery_id, not_arrived):
+def find_all_delivery_orders(not_arrived):
     if not_arrived:
-        return get_delivery_basket(delivery_id)
+        cur.execute('''select * from Delsending where arriving_time is NULL''')
+    else:
+        cur.execute('''select * from Delsending''')
 
-    return get_my_order(delivery_id)
+    rows = cur.fetchall()
+    con.commit()
+
+    return rows
+
+def find_delivery_basket(delivery_id, mine, not_arrived):
+    if mine:
+        if not_arrived:
+            return get_delivery_basket(delivery_id)
+        return get_my_order(delivery_id)
+
+    else:
+        return find_all_delivery_orders(not_arrived)
+
+def get_order_information(order_id):
+    cur.execute('''select * from Resorder where id = ''' + id_to_str(id))
+    rows = cur.fetchall()
+    return rows
 
 def check_name(name):
     cur.execute(

@@ -15,11 +15,10 @@ def basket_rows_to_list (basket):
 
     return l
 
-def my_basket (id):
-    not_arrived = False
+def my_current_order (id):
     error = False
     while True:
-        basket = delivery_query_handeler.find_delivery_basket(id, not_arrived)
+        basket = delivery_query_handeler.find_delivery_basket(id, True, True)
         l = basket_rows_to_list(basket)
 
         show_number = min(len(l), 12)
@@ -28,16 +27,50 @@ def my_basket (id):
             layout = [
                 [sg.Text("You don't have any order for Arriving", text_color='red')],
                 [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
-                [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True,
-                             default=not_arrived)],
                 [sg.Button("Back", size=(20, 1)), sg.Button("Order Arrived", size=(20, 1))]
             ]
         else:
             layout = [
                 [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
-                [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True, default=not_arrived)],
-                [sg.Button("Back", size = (20, 1)), sg.Button("Order Arrived", size = (20, 1))]
+                [sg.Button("Back", size=(20, 1)), sg.Button("Order Arrived", size=(20, 1))]
             ]
+
+        window = sg.Window("Delivery App", layout)
+
+        event, values = window.read()
+
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+
+        if event == "Back":
+            window.close()
+            return
+
+        if event == "Order Arrived":
+            rows = delivery_query_handeler.get_my_order(id)
+
+            if len(rows) == 0:
+                error = True
+                window.close()
+            else:
+                delivery_query_handeler.my_order_arrived(id)
+                error = False
+
+
+def my_basket_history (id):
+    not_arrived = False
+    while True:
+        basket = delivery_query_handeler.find_delivery_basket(id, True, not_arrived)
+        l = basket_rows_to_list(basket)
+
+        show_number = min(len(l), 12)
+
+
+        layout = [
+            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+            [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True, default=not_arrived)],
+            [sg.Button("Back", size = (20, 1))]
+        ]
 
         window = sg.Window("Delivery App", layout)
 
@@ -52,24 +85,87 @@ def my_basket (id):
 
         if event == "-NOTARRIVED-":
             not_arrived = values["-NOTARRIVED-"]
-            error = False
             window.close()
 
-        if event == "Order Arrived":
-            rows = delivery_query_handeler.get_my_order(id)
+def order_information_to_list (info):
+    l = []
 
-            if len(rows) == 0:
-                error = True
+    for row in info:
+        l.append("id: " + row[0] + "  restaurant id: " + row[1] + "  preparing time: " + row[2]
+                + "  customer id: " + row[3] + "  order time: " + row[4] + "  total price: " + row[5])
+
+    return l
+
+def show_information (order_id):
+    info = delivery_query_handeler.get_order_information(order_id)
+    l = order_information_to_list(info)
+    show_number = 1
+
+    layout = [
+        [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+        [sg.Button("Back", size=(20, 1))]
+    ]
+
+    if event == "Exit" or event == sg.WIN_CLOSED:
+        exit(0)
+
+    if event == "Back":
+        window.close()
+        return
+
+
+def orders_information (id):
+    not_arrived = False
+    mine = False
+    while True:
+        basket = delivery_query_handeler.find_delivery_basket(id, mine, not_arrived)
+        l = basket_rows_to_list(basket)
+
+        show_number = min(len(l), 12)
+
+        layout = [
+            [sg.Listbox(values=l, size=(70, show_number), key='-LIST-', enable_events=True)],
+            [sg.Checkbox("Filter Mine", size=(20, 1), key="-MINE-", enable_events=True, default=mine)],
+            [sg.Checkbox("Filter Not Arrived", size=(20, 1), key="-NOTARRIVED-", enable_events=True, default=not_arrived)],
+            [sg.Button("Back", size = (20, 1))]
+        ]
+
+        window = sg.Window("Delivery App", layout)
+
+        event, values = window.read()
+
+        if event == "Exit" or event == sg.WIN_CLOSED:
+            exit(0)
+
+        if event == "Back":
+            window.close()
+            return
+
+        if event == "-MINE-":
+            mine = values["-MINE-"]
+            window.close()
+
+
+        if event == "-NOTARRIVED-":
+            not_arrived = values["-NOTARRIVED-"]
+            window.close()
+
+        if event == "-LIST-":
+            if show_number > 0:
+                order_id = values["-LIST-"][0].split()[0]
                 window.close()
-            else:
-                delivery_query_handeler.my_order_arrived(id)
-                error = False
+                show_information(order_id)
+            window.close()
+
+
 
 
 def home_page(id):
     while True:
         layout = [
-            [sg.Button("My Basket", size=(20, 1))],
+            [sg.Button("My Current Order", size=(20, 1))],
+            [sg.Button("My Basket History", size=(20, 1))],
+            [sg.Button("Orders Information", size=(20, 1))],
             [sg.Button("Back", size=(20, 1))]
         ]
 
@@ -84,9 +180,17 @@ def home_page(id):
             window.close()
             return
 
-        if event == "My Basket":
+        if event == "My Current Order":
             window.close()
-            my_basket(id)
+            my_current_order(id)
+
+        if event == "My Basket History":
+            window.close()
+            my_basket_history(id)
+
+        if event == "Orders Information":
+            window.close()
+            orders_information(id)
 
 
 
