@@ -13,7 +13,8 @@ cur = con.cursor()
 cur.execute('''create table restaurant
         (id character('''+token_length+''') primary key not null,
         name character('''+name_length+'''),
-        phone_number character('''+phone_length+'''),
+        phone_number character('''+phone_length+''') 
+        CONSTRAINT proper_phone CHECK (phone_number ~* '^[0-9]'),
         area character('''+name_length+'''),
         type character('''+name_length+'''),
         score real DEFAULT 2.5 CHECK(score>=0 and score<=5),
@@ -27,27 +28,30 @@ cur.execute('''create table food
         description character('''+description_length+'''),
         price integer CHECK(price >=0),
         restaurant_id character('''+token_length+'''),
-        score real DEFAULT 0 CHECK(score>=0 and score<=5),
+        score real DEFAULT 2.5 CHECK(score>=0 and score<=5),
         foreign key (restaurant_id) references restaurant(id));''')
 
 cur.execute('''create table delivery
         (id character('''+token_length+''') primary key not null,
-        name character('''+name_length+'''),
+        name character('''+name_length+''')
+        CONSTRAINT proper_name CHECK (name ~* '^[a-zA-Z]'),
         salary integer CHECK(salary >0),
         area character('''+name_length+'''),
         busy boolean);''')
 
 cur.execute('''create table customer
         (id character('''+token_length+''') primary key not null,
-        name character('''+name_length+'''),
+        name character('''+name_length+''') 
+        CONSTRAINT proper_name CHECK (name ~* '^[a-zA-Z]'),
         area character('''+name_length+'''),
-        phone_number character('''+phone_length+'''),
+        phone_number character('''+phone_length+''') 
+        CONSTRAINT proper_phone CHECK (phone_number ~* '^[0-9]'),
         balance integer CHECK(balance >=0));''')
 
 
 cur.execute('''create table discountCode
         (id character('''+token_length+''') primary key not null,
-        percentage real CHECK(percentage >0 and percentage<=100),
+        percentage real CHECK(percentage >0 and percentage<=1),
         max integer CHECK(max >0),
         customer_id character('''+token_length+'''),
         used boolean,
@@ -74,7 +78,7 @@ cur.execute('''create table orderr
 cur.execute('''create table sending
         (order_id character('''+token_length+''') not null,
         delivery_id character('''+token_length+''') not null,
-        score integer DEFAULT 0 CHECK(score>=0 and score<=5),
+        score integer DEFAULT 2.5 CHECK(score>=0 and score<=5),
         arriving_time timestamp,
         cost integer CHECK(cost >=0),
         primary key (order_id, delivery_id),
@@ -85,21 +89,25 @@ cur.execute('''create table food_ordered
         (order_id character('''+token_length+''') not null,
         food_id character('''+token_length+'''),
         amount integer CHECK(amount >=0),
-        score integer DEFAULT 0 CHECK(score>=0 and score<=5),
+        score integer DEFAULT 2.5 CHECK(score>=0 and score<=5),
         primary key (order_id, food_id),
         foreign key (order_id) references orderr(id),
         foreign key (food_id) references food(id));''')
 
 cur.execute('''create table user_pass
         (customer_id character('''+token_length+''') not null,
-        password character('''+token_length+''') not null,
-        username character('''+token_length+''') not null,
+        password character('''+token_length+''') not null
+        CONSTRAINT password_with_number CHECK (password ~* '.*[0-9].*')
+        CONSTRAINT password_with_char CHECK (password ~* '.*[a-zA-Z].*'),
         primary key (customer_id)
         );''')
 
 cur.execute('''create table res_user_pass(
             restaurant_id character('''+token_length+''') not null,
             password character('''+token_length+''') not null,
+            CONSTRAINT password_with_number CHECK (password ~* '.*[0-9].*')
+            CONSTRAINT password_with_char CHECK (password ~* '.*[a-zA-Z].*'),
+     
             primary key (restaurant_id)
             );''')
 

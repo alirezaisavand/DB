@@ -153,14 +153,14 @@ def add_discount_code(client_id, percentage, max):
 
 def add_customer(username, password, name, area, phoner_number):
     print("NEW CUSTOMER")
-    cur.execute("select * from user_pass where username = '" + username + "';")
+    cur.execute("select * from user_pass where customer_id = '" + username + "';")
     rows = cur.fetchall()
-    id = Id_handler.get_new_id()
+    id = username
     if len(rows) == 0:
         cur.execute("insert into customer values('" + id + "', '" + name + "', '"
                     + area + "', '" + phoner_number + "', " + str(0)
                     + ");")
-        cur.execute("insert into user_pass values('" + id + "', '" + password + "' , '" + username + "');")
+        cur.execute("insert into user_pass values('" + id + "', '" + password + "');")
         con.commit()
         return id
     else:
@@ -180,7 +180,7 @@ for row in rows:
 
 def check_user_pass(username, password):
     cur.execute(
-        "select customer_id from user_pass where username='" + username + "' and  password = '" + password + "';")
+        "select customer_id from user_pass where customer_id='" + username + "' and  password = '" + password + "';")
     rows = cur.fetchall()
     con.commit()
     if len(rows) == 0:
