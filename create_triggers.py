@@ -19,7 +19,7 @@ cur.execute('''create trigger food_score_handler
             begin
             update food set score = (
             select avg(score) from food_ordered 
-            where foodOrdered.food_id = food.id 
+            where food_ordered.food_id = food.id 
             ) where food.id = n1.food_id
             end''')
 
