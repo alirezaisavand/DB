@@ -111,6 +111,11 @@ def foods_by_score():
 
 
 def order_food(customer_id, restaurant_id, food_id):
+    ex=find_restaurant_of_basket(customer_id)
+    if ex is not None and ex!=restaurant_id:
+        print("add food should be from same restaurant")
+        return
+
     cur.execute("select * from food where id = '" + food_id +
                 "' and restaurant_id = '" + restaurant_id + "';")
     rows = cur.fetchall()
@@ -284,16 +289,21 @@ def get_basket_price(client_id):
                 "where basket.customer_id='" + client_id + "';")
     return cur.fetchall()[0][0]
 
-
-def buy_basket_foods(client_id, discount_id=None):  # return order_id
+def find_restaurant_of_basket(client_id):
     rows = get_customer_basket(client_id)
     if len(rows) == 0:
-        print("BUY SOMETHING FIRST")
-        return "-1"
+        return None
     first_food_id = rows[0][2]
 
     cur.execute("select restaurant_id from cusfood where id='" + first_food_id + "';")
     restaurant_id = cur.fetchall()[0][0]
+    return restaurant_id
+
+def buy_basket_foods(client_id, discount_id=None):  # return order_id
+    restaurant_id=find_restaurant_of_basket(client_id)
+    if restaurant_id is None:
+        print("buy something first!")
+        return -1
 
     cur.execute("select SUM(cusfood.price*basket.amount) FROM cusfood inner join basket ON(cusfood.id=basket.food_id)"
                 "where basket.customer_id='" + client_id + "';")
