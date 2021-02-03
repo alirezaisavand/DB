@@ -197,6 +197,7 @@ def home_page(id):
 def sign_up():
     username_error = False
     incomplete = False
+    password_error = False
     while True:
         layout = [
             [sg.Text('Enter Username', size=(20, 1)), sg.InputText()],
@@ -210,11 +211,15 @@ def sign_up():
         if incomplete:
             layout.append([sg.Text('Please Fill Inputs', text_color='red')])
 
-        if (username_error):
+        if username_error:
             layout.append([sg.Text('This Username is already Taken', text_color='red')])
+
+        if password_error:
+            layout.append([sg.Text('Password should have at least 1 digit', text_color='red')])
 
         incomplete = False
         username_error = False
+        password_error = False
 
         window = sg.Window("Delivery App", layout)
 
@@ -232,7 +237,8 @@ def sign_up():
                 l = delivery_query_handeler.find_username(values[0])
 
                 if len(l) == 0:
-                    delivery_query_handeler.add_new_delivery(values[2], values[3], values[4], values[0], values[1])
+                    if delivery_query_handeler.add_new_delivery(values[2], values[3], values[4], values[0], values[1]) == 1:
+                        password_error = True
                     print("Delivery Added")
                     window.close()
                     return

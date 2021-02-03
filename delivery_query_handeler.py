@@ -37,9 +37,12 @@ def update_delivery_salary(delivery_id, new_salary):
 
 def add_new_delivery(name, salary, area, user, pas):
     id = user
-    cur.execute("insert into delivery values('" + id + "','" + name + "'," + str(
-            salary) + ",'" + area + "',false);")
-    cur.execute("insert into del_user_pass values('" + id + "', '" + pas + "')")
+    try:
+        cur.execute("insert into delivery values('" + id + "','" + name + "'," + str(
+                salary) + ",'" + area + "',false);")
+        cur.execute("insert into del_user_pass values('" + id + "', '" + pas + "')")
+    except:
+        return -1
 
     con.commit()
 
