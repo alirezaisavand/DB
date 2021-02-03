@@ -33,6 +33,20 @@ cur.execute('''create trigger restaurant_score_handler
             ) where restaurant.id = n1.restaurant_id 
             end''')
 
-#cur.execute('''create trigger''')
+cur.execute('''create trigger set_delivery_busy
+            after insert on ressending
+            referecing new as n1 old as o1
+            for each row
+            begin
+                update delivery set busy = true where id = n1.delivery_id
+            end''')
+
+cur.execute('''create trigger set_delivery_free
+            after update on ressending
+            referencing new as n1 old as o1
+            for each row
+            begin
+                update delivery set busy = false where id = n1.delivery_id
+            end''')
 
 con.commit()
