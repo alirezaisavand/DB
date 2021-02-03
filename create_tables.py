@@ -107,7 +107,6 @@ cur.execute('''create table res_user_pass(
             password character('''+token_length+''') not null
             CONSTRAINT password_with_number CHECK (password ~* '.*[0-9].*')
             CONSTRAINT password_with_char CHECK (password ~* '.*[a-zA-Z].*'),
-            username character('''+token_length+''') not null,
             primary key (restaurant_id)
             );''')
 
