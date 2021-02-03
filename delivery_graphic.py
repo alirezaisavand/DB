@@ -237,11 +237,11 @@ def sign_up():
                 l = delivery_query_handeler.find_username(values[0])
 
                 if len(l) == 0:
-                    if delivery_query_handeler.add_new_delivery(values[2], values[3], values[4], values[0], values[1]) == 1:
+                    if delivery_query_handeler.add_new_delivery(values[2], values[3], values[4], values[0], values[1]) == -1:
                         password_error = True
-                    print("Delivery Added")
-                    window.close()
-                    return
+                    else:
+                        window.close()
+                        return
                 else:
                     username_error = True
             else:

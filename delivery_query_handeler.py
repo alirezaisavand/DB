@@ -41,10 +41,11 @@ def add_new_delivery(name, salary, area, user, pas):
         cur.execute("insert into delivery values('" + id + "','" + name + "'," + str(
                 salary) + ",'" + area + "',false);")
         cur.execute("insert into del_user_pass values('" + id + "', '" + pas + "')")
+        con.commit()
     except:
         return -1
 
-    con.commit()
+    return 0
 
 def get_delivery_basket(delivery_id):
     cur.execute("select * from Ressending where delivery_id='" + delivery_id + "';")
