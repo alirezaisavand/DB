@@ -113,15 +113,12 @@ cur.execute('''create table res_user_pass(
 
 cur.execute('''create table del_user_pass(
             delivery_id character('''+token_length+''') not null,
-<<<<<<< HEAD
             password character('''+token_length+''') not null,
-=======
             username character('''+token_length+''') not null,
             password character('''+token_length+''') not null
             CONSTRAINT password_with_number CHECK (password ~* '.*[0-9].*')
             CONSTRAINT password_with_char CHECK (password ~* '.*[a-zA-Z].*')
             ,
->>>>>>> 3d4c32db24d3b6f550973bbb3b63a1459ffbc236
             primary key (delivery_id)
             );''')
 
