@@ -29,10 +29,16 @@ def get_not_completed_order(restaurant_id):
 
 def add_food_to_restaurant(restaurant_id, food_name, food_type, food_description, food_price):
     food_id = Id_handler.get_new_id()
-    cur.execute("INSERT INTO RESfood VALUES('" + food_id + "','" + food_name + "','" + food_type + "',0,'"
+    try:
+        cur.execute("INSERT INTO RESfood VALUES('" + food_id + "','" + food_name + "','" + food_type + "',0,'"
                 + food_description + "'," + str(food_price) + ",'" + restaurant_id + "');")
-    con.commit()
-    return id
+
+        con.commit()
+        return True
+    except:
+        return False
+
+    return False
 
 
 def set_delivery_for_order(order_id, delivery_id):

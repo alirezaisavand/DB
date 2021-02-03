@@ -163,6 +163,7 @@ def increase_food(user_tOKen):
 
 def add_new_food(user_tOKen):
     incomplete = 0
+    error = 0
     while True:
         layout = [
         [sg.Text('Enter Name', size=(20, 1)), sg.InputText()],
@@ -173,6 +174,8 @@ def add_new_food(user_tOKen):
         ]
         if incomplete:
             layout.append([sg.Text('Please Fill Inputs', text_color='red')])
+        if error:
+            layout.append([sg.Text('Error at Input Values', text_color='red')])
         window = sg.Window("Restaurant App", layout, auto_size_text=True, auto_size_buttons=True)
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
@@ -184,9 +187,13 @@ def add_new_food(user_tOKen):
             print(values)
             if check_complete(values):
                 incomplete = 0
-                restaurant_query_handeler.add_food_to_restaurant(user_tOKen, values[0], values[1], values[2], values[3])
+                if restaurant_query_handeler.add_food_to_restaurant(user_tOKen, values[0], values[1], values[2], values[3]) == False:
+                    error = 1
+                else:
+                    error = 0
             else:
                 incomplete = 1
+                error = 0
             window.close()
 
 def choose_delivery_for_order(user_token, order_id):
@@ -282,6 +289,7 @@ def home_page(user_token):
 
 def sign_up():
     incomplete = 0
+    user_exists = 0
     while True:
         layout = [
             [sg.Text('Enter Username',size=(20, 1)), sg.InputText()],
@@ -294,6 +302,8 @@ def sign_up():
             [sg.Button('OK',size=(10, 1)), sg.Button("Back",size=(10, 1))]]
         if incomplete:
             layout.append([sg.Text('Please Fill Inputs', text_color='red')])
+        if user_exists:
+            layout.append([sg.Text('Username Currently Exists', text_color='red')])
         window = sg.Window("Restaurant App", layout)
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
@@ -303,11 +313,15 @@ def sign_up():
             return
         elif event == "OK":
             if check_complete(values):
-                incomplete = 0
-                restaurant_query_handeler.add_restaurant(values[0], values[1], values[2], values[3], values[4], values[5], values[6])
                 window.close()
-                initial_screen()
+                incomplete = 0
+                if restaurant_query_handeler.add_restaurant(values[0], values[1], values[2], values[3], values[4], values[5], values[6]) == True:
+                    initial_screen()
+                    user_exists = 0
+                else:
+                    user_exists = 1
             else:
+                user_exists = 0
                 incomplete = 1
                 window.close()
 
