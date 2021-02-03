@@ -16,24 +16,24 @@ cur.execute('''create table restaurant
         phone_number character('''+phone_length+'''),
         area character('''+name_length+'''),
         type character('''+name_length+'''),
-        score real DEFAULT 0,
-        min_order integer);''')
+        score real DEFAULT 2.5 CHECK(score>=0 and score<=5),
+        min_order integer CHECK(min_order>=0) ); ''')
 
 cur.execute('''create table food
         (id character('''+token_length+''') primary key not null,
         name character('''+name_length+'''),
         type character('''+name_length+'''),
-        amount integer,
+        amount integer CHECK(amount >=0),
         description character('''+description_length+'''),
-        price integer,
+        price integer CHECK(price >=0),
         restaurant_id character('''+token_length+'''),
-        score real DEFAULT 0,
+        score real DEFAULT 0 CHECK(score>=0 and score<=5),
         foreign key (restaurant_id) references restaurant(id));''')
 
 cur.execute('''create table delivery
         (id character('''+token_length+''') primary key not null,
         name character('''+name_length+'''),
-        salary integer,
+        salary integer CHECK(salary >0),
         area character('''+name_length+'''),
         busy boolean);''')
 
@@ -42,13 +42,13 @@ cur.execute('''create table customer
         name character('''+name_length+'''),
         area character('''+name_length+'''),
         phone_number character('''+phone_length+'''),
-        balance integer);''')
+        balance integer CHECK(balance >=0));''')
 
 
 cur.execute('''create table discountCode
         (id character('''+token_length+''') primary key not null,
-        percentage real,
-        max integer,
+        percentage real CHECK(percentage >0 and percentage<=100),
+        max integer CHECK(max >0),
         customer_id character('''+token_length+'''),
         used boolean,
         foreign key (customer_id) references customer(id));''')
@@ -56,7 +56,7 @@ cur.execute('''create table discountCode
 cur.execute('''create table basket
         (customer_id character('''+token_length+''') not null,
         food_id character('''+token_length+''') not null,
-        amount integer,
+        amount integer CHECK(amount >=0),
         primary key(customer_id, food_id));''')
 
 cur.execute('''create table orderr
@@ -66,7 +66,7 @@ cur.execute('''create table orderr
         discount_id character('''+token_length+''') ,
         preparing_time timestamp,
         order_time timestamp,
-        total_price integer,
+        total_price integer CHECK(total_price >=0),
         foreign key (restaurant_id) references restaurant(id),
         foreign key (customer_id) references customer(id),
         foreign key (discount_id) references discountCode(id));''')
@@ -74,9 +74,9 @@ cur.execute('''create table orderr
 cur.execute('''create table sending
         (order_id character('''+token_length+''') not null,
         delivery_id character('''+token_length+''') not null,
-        score integer DEFAULT 0,
+        score integer DEFAULT 0 CHECK(score>=0 and score<=5),
         arriving_time timestamp,
-        cost integer,
+        cost integer CHECK(cost >=0),
         primary key (order_id, delivery_id),
         foreign key (order_id) references orderr(id),
         foreign key (delivery_id) references delivery(id));''')
@@ -84,8 +84,8 @@ cur.execute('''create table sending
 cur.execute('''create table food_ordered
         (order_id character('''+token_length+''') not null,
         food_id character('''+token_length+'''),
-        amount integer,
-        score integer DEFAULT 0,
+        amount integer CHECK(amount >=0),
+        score integer DEFAULT 0 CHECK(score>=0 and score<=5),
         primary key (order_id, food_id),
         foreign key (order_id) references orderr(id),
         foreign key (food_id) references food(id));''')
