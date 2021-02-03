@@ -271,9 +271,9 @@ def order_detail(order_id, user_token):
             return
         elif event == "home page":
             home_page(user_token)
-        elif event == "set" and values[0] != "":
+        elif event == "set" and values[0] != "" and 5 >= int(values[0]) >= 0:
             client_query_handler.add_delivery_score(sending_data[0], int(values[0]))
-        elif event == "-LIST-" and values[1] != "" and len(l) != 0:
+        elif event == "-LIST-" and values[1] != "" and len(l) != 0 and 5 >= int(values[1]) >= 0:
             food_name = values["-LIST-"][0].split()[1]
             food_id = client_query_handler.find_food_id(order_id, food_name)
             client_query_handler.add_score(order_id, food_id, int(values[1]))
@@ -371,8 +371,11 @@ def sign_up():
             window.close()
             return
         if values[0] != "" and values[1] != "" and values[2] != "" and values[3] != "" and values[4] != "":
-            client_query_handler.add_customer(values[0], values[1], values[2], values[3], values[4])
-            initial_screen()
+            try:
+                client_query_handler.add_customer(values[0], values[1], values[2], values[3], values[4])
+                initial_screen()
+            except:
+                print("enter valid data")
 
 
 def initial_screen():
