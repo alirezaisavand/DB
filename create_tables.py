@@ -106,7 +106,6 @@ cur.execute('''create table res_user_pass(
 
 cur.execute('''create table del_user_pass(
             delivery_id character('''+token_length+''') not null,
-            username character('''+token_length+''') not null,
             password character('''+token_length+''') not null,
             primary key (delivery_id)
             );''')

@@ -36,10 +36,10 @@ def update_delivery_salary(delivery_id, new_salary):
 
 
 def add_new_delivery(name, salary, area, user, pas):
-    id = Id_handler.get_new_id()
+    id = user
     cur.execute("insert into delivery values('" + id + "','" + name + "'," + str(
             salary) + ",'" + area + "',false);")
-    cur.execute("insert into del_user_pass values('" + id + "', '" + user + "', '" + pas + "')")
+    cur.execute("insert into del_user_pass values('" + id + "', '" + pas + "')")
 
     con.commit()
 
@@ -80,13 +80,13 @@ def get_order_information(order_id):
     return rows
 
 def find_username(username):
-    cur.execute('''select * from del_user_pass where username = ''' + id_to_str(username))
+    cur.execute('''select * from del_user_pass where delivery_id = ''' + id_to_str(username))
     rows = cur.fetchall()
     con.commit()
     return rows
 
 def check_user_pass(user, pas):
-    cur.execute("select delivery_id from del_user_pass where username = " + id_to_str(user) +
+    cur.execute("select delivery_id from del_user_pass where delivery_id = " + id_to_str(user) +
                 "and password = " + id_to_str(pas) + ";")
     rows = cur.fetchall()
     con.commit()

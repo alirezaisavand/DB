@@ -33,4 +33,6 @@ cur.execute('''create trigger restaurant_score_handler
             ) where restaurant.id = n1.restaurant_id 
             end''')
 
+#cur.execute('''create trigger''')
+
 con.commit()
