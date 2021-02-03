@@ -169,15 +169,6 @@ def add_customer(username, password, name, area, phoner_number):
         return 0
 
 
-cur.execute("select * from user_pass")
-rows = cur.fetchall()
-
-for row in rows:
-    print("id = ", row[0])
-    print("user = ", row[1])
-    print("pass = ", row[2])
-
-
 def check_user_pass(username, password):
     cur.execute(
         "select customer_id from user_pass where customer_id='" + username + "' and  password = '" + password + "';")

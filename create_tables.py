@@ -104,19 +104,22 @@ cur.execute('''create table user_pass
 
 cur.execute('''create table res_user_pass(
             restaurant_id character('''+token_length+''') not null,
-            password character('''+token_length+''') not null,
+            password character('''+token_length+''') not null
             CONSTRAINT password_with_number CHECK (password ~* '.*[0-9].*')
             CONSTRAINT password_with_char CHECK (password ~* '.*[a-zA-Z].*'),
-     
+            username character('''+token_length+''') not null,
             primary key (restaurant_id)
             );''')
 
 cur.execute('''create table del_user_pass(
             delivery_id character('''+token_length+''') not null,
-            username character('''+token_length+''') not null,
-            password character('''+token_length+''') not null,
+            password character('''+token_length+''') not null
+            CONSTRAINT password_with_number CHECK (password ~* '.*[0-9].*')
+            CONSTRAINT password_with_char CHECK (password ~* '.*[a-zA-Z].*')
+            ,
             primary key (delivery_id)
             );''')
+
 
 print("create tables are Done!")
 
