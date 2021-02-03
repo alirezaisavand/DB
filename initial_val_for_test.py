@@ -3,11 +3,11 @@ import delivery_query_handeler
 import client_query_handler
 
 # add five restaurant
-b1 = restaurant_query_handeler.add_restaurant("A1", "12536985", "Meikhosh1", "2", "1111", "fast food", 20)
-b2 = restaurant_query_handeler.add_restaurant("B2", "22536986", "Meikhosh2", "2", "2222", "traditional", 30)
-b3 = restaurant_query_handeler.add_restaurant("C3", "32536987", "Meikhosh3", "3", "3333", "fast food", 40)
-b4 = restaurant_query_handeler.add_restaurant("D4", "42536988", "Meikhosh4", "3", "4444", "traditional", 50)
-b5 = restaurant_query_handeler.add_restaurant("E5", "52536989", "Meikhosh5", "4", "5555", "fast food", 60)
+b1 = restaurant_query_handeler.add_restaurant("A1", "12536a985", "Meikhosh1", "2", "1111", "fast food", 20)
+b2 = restaurant_query_handeler.add_restaurant("B2", "22536b986", "Meikhosh2", "2", "2222", "traditional", 30)
+b3 = restaurant_query_handeler.add_restaurant("C3", "32536c987", "Meikhosh3", "3", "3333", "fast food", 40)
+b4 = restaurant_query_handeler.add_restaurant("D4", "42536d988", "Meikhosh4", "3", "4444", "traditional", 50)
+b5 = restaurant_query_handeler.add_restaurant("E5", "52536e989", "Meikhosh5", "4", "5555", "fast food", 60)
 # add 3 food to each
 restaurant_query_handeler.add_food_to_restaurant(b2, "Ash", "dessert", "in ye ghazaye alist", 10)
 restaurant_query_handeler.add_food_to_restaurant(b2, "Kabab", "main", "in ye ghazaye alist", 12)
@@ -30,15 +30,15 @@ restaurant_query_handeler.add_food_to_restaurant(b5, "pizpiz", "main", "in ye gh
 restaurant_query_handeler.add_food_to_restaurant(b5, "sosmos", "pass ghaza", "in ye ghazaye alist", 152)
 
 # delivery
-delivery_query_handeler.add_new_delivery("ali", 20, "2", "a", "a")
-delivery_query_handeler.add_new_delivery("akbar", 20, "2", "b", "b")
-delivery_query_handeler.add_new_delivery("sara", 40, "3", "c", "c")
-delivery_query_handeler.add_new_delivery("mojan", 50, "3", "d", "d")
-delivery_query_handeler.add_new_delivery("raha", 79, "4", "e", "e")
-delivery_query_handeler.add_new_delivery("arshia", 90, "4", "f", "f")
+delivery_query_handeler.add_new_delivery("ali", 20, "2", "a", "a1")
+delivery_query_handeler.add_new_delivery("akbar", 20, "2", "b", "b1")
+delivery_query_handeler.add_new_delivery("sara", 40, "3", "c", "c1")
+delivery_query_handeler.add_new_delivery("mojan", 50, "3", "d", "d1")
+delivery_query_handeler.add_new_delivery("raha", 79, "4", "e", "e1")
+delivery_query_handeler.add_new_delivery("arshia", 90, "4", "f", "f1")
 
 # add test customer
-c1 = client_query_handler.add_customer("test", "test", "arshia", "2", "9128381385")
+c1 = client_query_handler.add_customer("test", "test1", "arshia", "2", "9128381385")
 
 # add discount
 client_query_handler.add_discount_code(c1, 0.5, 20)
