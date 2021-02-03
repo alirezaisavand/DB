@@ -27,7 +27,7 @@ cur.execute('''create table food
         description character('''+description_length+'''),
         price integer CHECK(price >=0),
         restaurant_id character('''+token_length+'''),
-        score real DEFAULT 0 CHECK(score>=0 and score<=5),
+        score real DEFAULT 2.5 CHECK(score>=0 and score<=5),
         foreign key (restaurant_id) references restaurant(id));''')
 
 cur.execute('''create table delivery
@@ -74,7 +74,7 @@ cur.execute('''create table orderr
 cur.execute('''create table sending
         (order_id character('''+token_length+''') not null,
         delivery_id character('''+token_length+''') not null,
-        score integer DEFAULT 0 CHECK(score>=0 and score<=5),
+        score integer DEFAULT 2.5 CHECK(score>=0 and score<=5),
         arriving_time timestamp,
         cost integer CHECK(cost >=0),
         primary key (order_id, delivery_id),
@@ -85,7 +85,7 @@ cur.execute('''create table food_ordered
         (order_id character('''+token_length+''') not null,
         food_id character('''+token_length+'''),
         amount integer CHECK(amount >=0),
-        score integer DEFAULT 0 CHECK(score>=0 and score<=5),
+        score integer DEFAULT 2.5 CHECK(score>=0 and score<=5),
         primary key (order_id, food_id),
         foreign key (order_id) references orderr(id),
         foreign key (food_id) references food(id));''')
