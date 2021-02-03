@@ -13,7 +13,7 @@ cur = con.cursor()
 cur.execute('''create table restaurant
         (id character('''+token_length+''') primary key not null,
         name character('''+name_length+'''),
-        phone_number character('''+phone_length+''') 
+        phone_number character('''+phone_length+''') unique
         CONSTRAINT proper_phone CHECK (phone_number ~* '^[0-9]'),
         area character('''+name_length+'''),
         type character('''+name_length+'''),
@@ -44,7 +44,7 @@ cur.execute('''create table customer
         name character('''+name_length+''') 
         CONSTRAINT proper_name CHECK (name ~* '^[a-zA-Z]'),
         area character('''+name_length+'''),
-        phone_number character('''+phone_length+''') 
+        phone_number character('''+phone_length+''') unique
         CONSTRAINT proper_phone CHECK (phone_number ~* '^[0-9]'),
         balance integer CHECK(balance >=0));''')
 
