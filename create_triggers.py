@@ -11,42 +11,71 @@ description_length = data["postgresql"]["description_length"]
 
 cur = con.cursor()
 #check kon ino
-cur.execute('''create trigger food_score_handler 
-            after update of score on food_ordered
-            referencing new as n1 old as o1 
-            for each row
-            when (n1.score is not null)
-            begin
-            update food set score = (
+
+cur.execute('''CREATE OR REPLACE FUNCTION food_score()
+  RETURNS trigger AS
+$$
+BEGIN
+    update food set score = (
             select avg(score) from food_ordered 
             where food_ordered.food_id = food.id 
-            ) where food.id = n1.food_id
-            end''')
+            ) where food.id = new.food_id;     
+ 
+    RETURN NEW;
+END;
+$$
+LANGUAGE 'plpgsql';''')
+
+cur.execute('''create trigger food_score_handler
+            after update of score on food_ordered
+            for each row
+            when (new.score is not null)
+            execute procedure food_score();''')
+
+cur.execute('''CREATE OR REPLACE FUNCTION restaurant_score()
+  RETURNS trigger AS
+$$
+BEGIN
+    update restaurant set score = (
+                select avg(score) from food where food.restaurant_id = restaurant.id
+            ) where restaurant.id = new.restaurant_id;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE 'plpgsql';''')
 
 cur.execute('''create trigger restaurant_score_handler
             after update of score on food
-            referencing new as n1 old as o1
             for each row
-            begin
-            update restaurant set score = (
-                select avg(score) from food where food.restaurant_id = restaurant.id
-            ) where restaurant.id = n1.restaurant_id 
-            end''')
+            execute procedure restaurant_score()''')
+
+cur.execute('''CREATE OR REPLACE FUNCTION delivery_busy()
+  RETURNS trigger AS
+$$
+BEGIN
+    update delivery set busy = true where id = new.delivery_id;
+    RETURN NEW;
+END;
+$$
+LANGUAGE 'plpgsql';''')
 
 cur.execute('''create trigger set_delivery_busy
             after insert on ressending
-            referecing new as n1 old as o1
-            for each row
-            begin
-                update delivery set busy = true where id = n1.delivery_id
-            end''')
+            execute procedure delivery_busy()''')
+
+cur.execute('''CREATE OR REPLACE FUNCTION delivery_free()
+  RETURNS trigger AS
+$$
+BEGIN
+    update delivery set busy = false where id = new.delivery_id;
+    RETURN NEW;
+END;
+$$
+LANGUAGE 'plpgsql';''')
 
 cur.execute('''create trigger set_delivery_free
-            after update on ressending
-            referencing new as n1 old as o1
-            for each row
-            begin
-                update delivery set busy = false where id = n1.delivery_id
-            end''')
+            after insert on ressending
+            execute procedure delivery_free()''')
 
 con.commit()
