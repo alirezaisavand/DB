@@ -150,9 +150,9 @@ def get_restaurant_orders(restaurant_id, filter_arrived, filter_set_delivery, fi
 
     return results
 
-def check_user_pass(username, password):
+def check_user_pass(id, password):
     cur.execute(
-        "select restaurant_id from res_user_pass where username=" + id_to_str(username) + " and  password = " + id_to_str(password) + ";")
+        "select restaurant_id from res_user_pass where restaurant_id=" + id_to_str(id) + " and  password = " + id_to_str(password) + ";")
     rows = cur.fetchall()
     con.commit()
     if len(rows) == 0:
@@ -160,11 +160,10 @@ def check_user_pass(username, password):
     return rows[0][0]
 
 
-def add_restaurant(username, password, name, area, phone_number, type, min_order):
+def add_restaurant(id, password, name, area, phone_number, type, min_order):
     print("NEW RESTAURANT")
-    cur.execute("select * from res_user_pass where username = " + id_to_str(username) + ";")
+    cur.execute("select * from res_user_pass where restaurant_id = " + id_to_str(id) + ";")
     rows = cur.fetchall()
-    id = Id_handler.get_new_id()
     if len(rows) == 0:
         cur.execute("insert into restaurant values(" +
                     id_to_str(id) + ", " +
@@ -178,16 +177,15 @@ def add_restaurant(username, password, name, area, phone_number, type, min_order
                     )
         cur.execute("insert into res_user_pass values(" +
                     id_to_str(id) + ", " +
-                    id_to_str(password) + ", " +
-                    id_to_str(username) +
+                    id_to_str(password) +
                     ");"
                     )
         con.commit()
-        return id
+        return True
     else:
         print("this user currently exists!")
         con.commit()
-        return None
+        return False
 
 def get_restaurant_info(id):
     cur.execute("select * from Resrestaurant where id = " + id_to_str(id) + ";")
